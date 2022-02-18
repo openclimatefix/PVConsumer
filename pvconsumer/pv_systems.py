@@ -22,8 +22,11 @@ def load_pv_systems(filename: Optional[str] = None) -> List[PVSystem]:
     :param filename: filename to load
     :return: list of pv systems
     """
+
     if filename is None:
         filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems.csv"
+
+    logger.debug(f"Loading local pv systems from {filename}")
 
     pv_capacity = pd.read_csv(filename)
 
@@ -46,6 +49,8 @@ def find_missing_pv_systems(
     Returns: list of pv systems that are not in the database
 
     """
+
+    logger.debug("Looking which pv systems are missing")
 
     if len(pv_systems_db) == 0:
         return pv_systems_local
@@ -93,6 +98,8 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
         pv_systems_local=pv_system_local, pv_systems_db=pv_systems_db
     )
 
+    logger.debug(f"There are {len(missing_pv_system)} pv systems to add to the database")
+
     if len(missing_pv_system) > 0:
         # set up pv output.prg
         pv_output = PVOutput()
@@ -116,6 +123,7 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
             _ = PVSystem.from_orm(pv_system)
 
             # add to database
+            logger.debug(f"Adding pv system {pv_system.pv_system_id} to database")
             session.add(pv_system.to_orm())
 
     return session.query(PVSystemSQL).all()

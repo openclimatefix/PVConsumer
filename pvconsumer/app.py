@@ -39,10 +39,15 @@ def app(filename: Optional[str] = None):
     with connection.get_session() as session:
         # 1. Read list of PV systems (from local file)
         # and get their refresh times (refresh times can also be stored locally)
+        logger.debug("Read list of PV systems (from local file)")
         pv_systems = get_pv_systems(session=session, filename=filename)
 
         # 2. Find most recent entered data (for each PV system) in OCF database,
         # and filter depending on refresh rate
+        logger.debug(
+            "Find most recent entered data (for each PV system) in OCF database,"
+            "and filter pv systems depending on refresh rate"
+        )
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
@@ -61,6 +66,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     :param datetime_utc:
     :return:
     """
+
     pv_output = PVOutput()
 
     if datetime_utc is None:
