@@ -25,7 +25,7 @@ def app(filename: Optional[str] = None):
     """
     # TODO
 
-    :param filename:
+    :param filename: the local file name for the pv systems
     :return:
     """
     db_url = "sqlite:///test.db"
