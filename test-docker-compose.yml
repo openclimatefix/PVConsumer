@@ -21,8 +21,9 @@ services:
       - LOG_LEVEL=DEBUG
       - API_KEY=$API_KEY
       - SYSTEM_ID=$SYSTEM_ID
+      - DATA_SERVICE_URL=https://pvoutput.org/
     command: >
-      bash -c "pytest --cov=./nowcasting_forecast
+      bash -c "pytest --cov=./pvconsumer
       && coverage report -m
       && coverage xml
       && cp .coverage ./tests/
