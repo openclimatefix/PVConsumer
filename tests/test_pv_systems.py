@@ -99,7 +99,7 @@ def test_filter_pv_systems_which_have_new_data(db_session):
 
 
 def test_get_pv_systems(db_session):
-    filename = os.path.dirname(pvoutput.__file__) + "/../tests/data/pv_systems.csv"
+    filename = os.path.dirname(pvconsumer.__file__) + "/../tests/data/pv_systems.csv"
     pv_systems = get_pv_systems(session=db_session, filename=filename)
 
     assert len(pv_systems)
