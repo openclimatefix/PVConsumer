@@ -1,12 +1,8 @@
 numpy
 pandas
-pyproj
-pyshp
-shapely
-geopandas
 pytest
 pyyaml
 urllib3
 requests
 nowcasting_datamodel
-pvoutput
+pvoutput-ocf
