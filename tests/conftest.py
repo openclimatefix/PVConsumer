@@ -4,10 +4,6 @@ import pickle
 from functools import partial
 
 import pytest
-
-import os
-
-import pytest
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 
 

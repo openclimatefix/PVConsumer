@@ -6,10 +6,10 @@ from typing import List, Optional
 
 import pandas as pd
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
+from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
 import pvconsumer
-from pvoutput import PVOutput
 from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 
 logger = logging.getLogger(__name__)
