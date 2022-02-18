@@ -11,7 +11,7 @@ from pvconsumer.app import app, pull_data
 def test_pull_data(db_session):
 
     pv_systems = [
-        PVSystem(pv_system_id=10003, provider="pvoutput.org").to_orm(),
+        PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
     ]
 
     pv_yields = pull_data(pv_systems=pv_systems, session=db_session)
