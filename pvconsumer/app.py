@@ -7,16 +7,13 @@
 """
 
 import logging
-import os
 from datetime import datetime
 from typing import List, Optional
 
-import pandas as pd
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from sqlalchemy.orm import Session
 
-import pvoutput
 from pvoutput import PVOutput
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
 
@@ -27,9 +24,9 @@ logger = logging.getLogger(__name__)
 def app(filename: Optional[str] = None):
     """
     # TODO
-    
-    :param filename: 
-    :return: 
+
+    :param filename:
+    :return:
     """
     db_url = "sqlite:///test.db"
 
@@ -39,7 +36,8 @@ def app(filename: Optional[str] = None):
         # and get their refresh times (refresh times can also be stored locally)
         pv_systems = get_pv_systems(session=session, filename=filename)
 
-        # 2. Find most recent entered data (for each PV system) in OCF database, and filter depending on refresh rate
+        # 2. Find most recent entered data (for each PV system) in OCF database,
+        # and filter depending on refresh rate
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
@@ -52,11 +50,11 @@ def app(filename: Optional[str] = None):
 def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None):
     """
     # TODO
-    
-    :param pv_systems: 
-    :param session: 
-    :param datetime_utc: 
-    :return: 
+
+    :param pv_systems:
+    :param session:
+    :param datetime_utc:
+    :return:
     """
     pv_output = PVOutput()
 
@@ -80,7 +78,8 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
         )
 
         logger.debug(
-            f"Got {len(pv_yield_df)} pv yield for pv systems {pv_system.pv_system_id} before filtering"
+            f"Got {len(pv_yield_df)} pv yield for "
+            f"pv systems {pv_system.pv_system_id} before filtering"
         )
 
         if len(pv_yield_df) == 0:
@@ -94,7 +93,8 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
 
                 if len(pv_yield_df) == 0:
                     logger.debug(
-                        f"No new data avialble after {last_pv_yield_datetime}. Last data point was {pv_yield_df.index.max()}"
+                        f"No new data avialble after {last_pv_yield_datetime}. "
+                        f"Last data point was {pv_yield_df.index.max()}"
                     )
                     logger.debug(pv_yield_df)
             else:
@@ -129,7 +129,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
 def save_to_database(session: Session, pv_yields: List[PVYield]):
     """
     Save pv data to database
-    
+
     :param session: database session
     :param pv_yields: list of pv data
     """

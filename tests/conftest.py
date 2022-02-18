@@ -32,5 +32,3 @@ def db_session(db_connection):
         s.begin()
         yield s
         s.rollback()
-
-

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def load_pv_systems(filename: Optional[str] = None) -> List[PVSystem]:
     """
     Load pv systems from file
-    
+
     :param filename: filename to load
     :return: list of pv systems
     """
@@ -72,11 +72,11 @@ def find_missing_pv_systems(
 def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVSystemSQL]:
     """
     Get PV systems
-    
+
     1. Load from database
     2. load from local
     3. add any pv systems not in database, by query pvoutput.org
-    
+
     :param session: database sessions
     :param filename: filename for local pv systems
     :return: list of pv systems sqlalchemy objects
