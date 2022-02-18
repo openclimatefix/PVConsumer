@@ -1,8 +1,8 @@
 numpy
 pandas
-pytest
 pyyaml
 urllib3
 requests
 nowcasting_datamodel
 pvoutput-ocf
+click
