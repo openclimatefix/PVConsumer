@@ -1,4 +1,7 @@
 # PVConsumer
+
+[![codecov](https://codecov.io/gh/openclimatefix/PVConsumer/branch/main/graph/badge.svg?token=R0VM4YBUJS)](https://codecov.io/gh/openclimatefix/PVConsumer)
+
 Consumer PV data from various sources
 
 
