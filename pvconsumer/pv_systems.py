@@ -8,7 +8,7 @@ import pandas as pd
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
 from sqlalchemy.orm import Session
 
-import pvoutput
+import pvconsumer
 from pvoutput import PVOutput
 from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 
@@ -23,7 +23,7 @@ def load_pv_systems(filename: Optional[str] = None) -> List[PVSystem]:
     :return: list of pv systems
     """
     if filename is None:
-        filename = os.path.dirname(pvoutput.__file__) + "/data/pv_systems.csv"
+        filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems.csv"
 
     pv_capacity = pd.read_csv(filename)
 
