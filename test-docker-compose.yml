@@ -19,6 +19,8 @@ services:
     environment:
       - DB_URL=postgresql://postgres:postgres@postgres:5432/postgres
       - LOG_LEVEL=DEBUG
+      - API_KEY=$API_KEY
+      - SYSTEM_ID=$SYSTEM_ID
     command: >
       bash -c "pytest --cov=./nowcasting_forecast
       && coverage report -m

@@ -17,6 +17,9 @@ jobs:
 
       - name: Run tests inside the container
         run: docker-compose -f test-docker-compose.yml run pvconsumer
+        env: # Or as an environment variable
+          API_KEY: ${{ secrets.API_KEY }}
+          SYSTEM_ID: ${{ secrets.SYSTEM_ID }}
 
       - name: Copy coverage
         run: |
