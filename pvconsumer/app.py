@@ -33,7 +33,7 @@ def app(filename: Optional[str] = None):
     :param filename: the local file name for the pv systems
     :return:
     """
-    db_url = os.getenv(DB_URL, "sqlite:///test.db")
+    db_url = os.getenv('DB_URL', "sqlite:///test.db")
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     with connection.get_session() as session:
