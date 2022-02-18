@@ -1,3 +1,4 @@
+""" PV system functions """
 import logging
 import os
 from datetime import datetime, timedelta
@@ -15,7 +16,12 @@ logger = logging.getLogger(__name__)
 
 
 def load_pv_systems(filename: Optional[str] = None) -> List[PVSystem]:
-
+    """
+    Load pv systems from file
+    
+    :param filename: filename to load
+    :return: list of pv systems
+    """
     if filename is None:
         filename = os.path.dirname(pvoutput.__file__) + "/data/pv_systems.csv"
 
@@ -64,7 +70,17 @@ def find_missing_pv_systems(
 
 
 def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVSystemSQL]:
-
+    """
+    Get PV systems
+    
+    1. Load from database
+    2. load from local
+    3. add any pv systems not in database, by query pvoutput.org
+    
+    :param session: database sessions
+    :param filename: filename for local pv systems
+    :return: list of pv systems sqlalchemy objects
+    """
     # load all pv systems in database
     pv_systems_sql_db: List[PVSystemSQL] = session.query(PVSystemSQL).all()
     pv_systems_db = [PVSystem.from_orm(pv_system) for pv_system in pv_systems_sql_db]

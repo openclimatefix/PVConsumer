@@ -25,6 +25,12 @@ logger = logging.getLogger(__name__)
 
 # TODO add click arguements
 def app(filename: Optional[str] = None):
+    """
+    # TODO
+    
+    :param filename: 
+    :return: 
+    """
     db_url = "sqlite:///test.db"
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
@@ -44,6 +50,14 @@ def app(filename: Optional[str] = None):
 
 
 def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None):
+    """
+    # TODO
+    
+    :param pv_systems: 
+    :param session: 
+    :param datetime_utc: 
+    :return: 
+    """
     pv_output = PVOutput()
 
     if datetime_utc is None:
@@ -113,6 +127,12 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
 
 
 def save_to_database(session: Session, pv_yields: List[PVYield]):
+    """
+    Save pv data to database
+    
+    :param session: database session
+    :param pv_yields: list of pv data
+    """
     logger.debug(f"Will be adding {len(pv_yields)} pv yield object to database")
 
     session.add_all(pv_yields)
