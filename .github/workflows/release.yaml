@@ -5,7 +5,7 @@ on:
       - main
 
 jobs:
-  bump-version-python-docker-release:
+  bump-version-docker-release:
     uses: openclimatefix/.github/.github/workflows/docker-release.yml@main
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
