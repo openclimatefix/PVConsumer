@@ -2,12 +2,12 @@
 
 [![codecov](https://codecov.io/gh/openclimatefix/PVConsumer/branch/main/graph/badge.svg?token=R0VM4YBUJS)](https://codecov.io/gh/openclimatefix/PVConsumer)
 
-Consumer PV data from various sources
+Consumer PV data from pvoutput.org. THe idea is to expand to different data sources in the future.
 
 
 # Live
 
-This application pull live data from PV output.org and stores it in our own database
+This application pulls live data from PV output.org and stores it in a database
 
 To run the application locally
 ```bash

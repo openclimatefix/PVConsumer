@@ -7,6 +7,7 @@
 """
 
 import logging
+import os
 from datetime import datetime
 from typing import List, Optional
 
@@ -17,7 +18,12 @@ from sqlalchemy.orm import Session
 
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
 
+logging.basicConfig(
+     level=getattr(logging, os.getenv('LOGLEVEL', 'INFO')),
+     format= '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s',
+ )
 logger = logging.getLogger(__name__)
+
 
 
 # TODO add click arguements
