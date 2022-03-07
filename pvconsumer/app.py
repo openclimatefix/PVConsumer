@@ -44,7 +44,7 @@ logger = logging.getLogger(__name__)
 )
 def app(db_url: str, filename: Optional[str] = None):
     """
-    Run PV consumer app, this collect live PV data and save it to a database. 
+    Run PV consumer app, this collect live PV data and save it to a database.
 
     :param db_url: the Database url to save the PV system data
     :param filename: the local file name for the pv systems
