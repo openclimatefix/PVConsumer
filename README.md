@@ -75,4 +75,3 @@ as some queries can not be fully tested on a `sqlite` database
 - API_KEY: API key for pvoutput.org
 - SYSTEM_ID: System id for pvoutput.org
 - DATA_SERVICE_URL: data service url for pvoutput.org
-

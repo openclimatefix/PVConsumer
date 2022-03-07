@@ -5,6 +5,7 @@ from functools import partial
 
 import pytest
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
+
 import pvconsumer
 
 
@@ -33,5 +34,5 @@ def db_session(db_connection):
 
 @pytest.fixture
 def filename():
-    """ Test data filename """
+    """Test data filename"""
     return os.path.dirname(pvconsumer.__file__) + "/../tests/data/pv_systems.csv"
