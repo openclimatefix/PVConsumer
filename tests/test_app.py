@@ -31,10 +31,12 @@ def test_app(db_connection, filename):
     with db_connection.get_session() as session:
         pv_systems = session.query(PVSystemSQL).all()
         _ = PVSystem.from_orm(pv_systems[0])
-        assert len(pv_systems) == 10
+        assert len(pv_systems) == 9
 
         pv_yields = session.query(PVYieldSQL).all()
-        assert len(pv_yields) == 10
+        assert len(pv_yields) > 9
+        # the app gets multiple values for each pv system.
+        # There is a chance this will fail in the early morning when no data is available
     
     
 
