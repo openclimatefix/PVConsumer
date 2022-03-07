@@ -8,12 +8,14 @@
 
 import logging
 import os
+import click
 from datetime import datetime
 from typing import List, Optional
 
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from pvoutput import PVOutput
+import pvoutput
 from sqlalchemy.orm import Session
 
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
@@ -25,15 +27,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-# TODO add click arguements
-def app(filename: Optional[str] = None):
+@click.command()
+@click.option(
+    "--db-url",
+    default=None,
+    envvar="DB_URL",
+    help="The Database URL where forecasts will be saved",
+    type=click.STRING,
+)
+@click.option(
+    "--filename",
+    default=None,
+    envvar="FILENAME",
+    help="Filename of PV systems ids. Default is saved in pvconsumer/data",
+    type=click.STRING,
+)
+def app(db_url: str, filename: Optional[str] = None):
     """
-    # TODO
+    Run PV consumer app, this collect live PV data and save it to a database. 
 
+    :param db_url: the Database url to save the PV system data
     :param filename: the local file name for the pv systems
     :return:
     """
-    db_url = os.getenv('DB_URL', "sqlite:///test.db")
+
+    logger.info(f"Running PV Consumer app ({pvoutput.__version__})")
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     with connection.get_session() as session:
