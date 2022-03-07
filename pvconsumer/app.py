@@ -8,14 +8,14 @@
 
 import logging
 import os
-import click
 from datetime import datetime
 from typing import List, Optional
 
+import click
+import pvoutput
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from pvoutput import PVOutput
-import pvoutput
 from sqlalchemy.orm import Session
 
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
