@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import List, Optional
 
 import click
-import pvoutput
+import pvconsumer
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from pvoutput import PVOutput
@@ -51,7 +51,7 @@ def app(db_url: str, filename: Optional[str] = None):
     :return:
     """
 
-    logger.info(f"Running PV Consumer app ({pvoutput.__version__})")
+    logger.info(f"Running PV Consumer app ({pvconsumer.__version__})")
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     with connection.get_session() as session:
