@@ -12,12 +12,12 @@ from datetime import datetime
 from typing import List, Optional
 
 import click
-import pvconsumer
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
+import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
 
 logging.basicConfig(
