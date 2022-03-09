@@ -93,8 +93,15 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     logger.info(f"Pulling data for pv system {len(pv_systems)} pv systems for {datetime_utc}")
 
     all_pv_yields = []
-    for pv_system in pv_systems:
+    
+    n_pv_systems_per_batch = 1
+    pv_system_chunks = chunks(l=pv_systems,n=n_pv_systems_per_batch)
+    
+    for pv_system_chunk in pv_system_chunks:
 
+        # get all the pv system ids from a a group of pv systems
+        pv_system_ids = [pv_system_id.pv_system_id for pv_system_id in pv_system_chunk]
+        
         # lets take the date of the datetime now.
         # Note that we might miss data from the day before
         # if this is the first data pull after midnight.
@@ -102,58 +109,67 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
         # then this will just get data for 2022-01-02, and therefore missing
         # 2022-01-01 23.57 to 2022-01-02
         date = datetime_utc.date()
-        pv_yield_df = pv_output.get_status(
-            pv_system_id=pv_system.pv_system_id, date=date, use_data_service=True
+        all_pv_yield_df = pv_output.get_status(
+            pv_system_id=pv_system_ids, date=date, use_data_service=True
         )
-
-        logger.debug(
-            f"Got {len(pv_yield_df)} pv yield for "
-            f"pv systems {pv_system.pv_system_id} before filtering"
-        )
-
-        if len(pv_yield_df) == 0:
-            logger.warning(f"Did not find any data for {pv_system.pv_system_id} for {date}")
-        else:
-
-            # filter by last
-            if pv_system.last_pv_yield is not None:
-                last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc
-                pv_yield_df = pv_yield_df[pv_yield_df.index > last_pv_yield_datetime]
-
-                if len(pv_yield_df) == 0:
-                    logger.debug(
-                        f"No new data avialble after {last_pv_yield_datetime}. "
-                        f"Last data point was {pv_yield_df.index.max()}"
-                    )
-                    logger.debug(pv_yield_df)
-            else:
-                logger.debug(
-                    f"This is the first lot pv yield data for pv system {(pv_system.pv_system_id)}"
-                )
-
-            # need columns datetime_utc, solar_generation_kw
-            pv_yield_df = pv_yield_df[["instantaneous_power_gen_W"]]
-            pv_yield_df.rename(
-                columns={"instantaneous_power_gen_W": "solar_generation_kw"}, inplace=True
-            )
-            pv_yield_df["datetime_utc"] = pv_yield_df.index
-
-            # change to list of pydantic objects
-            pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
-
-            # change to sqlalamcy objects and add pv systems
-            pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
-            for pv_yield_sql in pv_yields_sql:
-                pv_yield_sql.pv_system = pv_system
-
-            all_pv_yields = all_pv_yields + pv_yields_sql
-
+    
+        for pv_system in pv_system_chunk:
+            
+            # TODO filter pv_yield_df on a pv_system
+            pv_yield_df = all_pv_yield_df
+    
             logger.debug(
-                f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
+                f"Got {len(pv_yield_df)} pv yield for "
+                f"pv systems {pv_system.pv_system_id} before filtering"
             )
+    
+            if len(pv_yield_df) == 0:
+                logger.warning(f"Did not find any data for {pv_system.pv_system_id} for {date}")
+            else:
+    
+                # filter by last
+                if pv_system.last_pv_yield is not None:
+                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc
+                    pv_yield_df = pv_yield_df[pv_yield_df.index > last_pv_yield_datetime]
+    
+                    if len(pv_yield_df) == 0:
+                        logger.debug(
+                            f"No new data avialble after {last_pv_yield_datetime}. "
+                            f"Last data point was {pv_yield_df.index.max()}"
+                        )
+                        logger.debug(pv_yield_df)
+                else:
+                    logger.debug(
+                        f"This is the first lot pv yield data for pv system {(pv_system.pv_system_id)}"
+                    )
+    
+                # need columns datetime_utc, solar_generation_kw
+                pv_yield_df = pv_yield_df[["instantaneous_power_gen_W"]]
+                pv_yield_df.rename(
+                    columns={"instantaneous_power_gen_W": "solar_generation_kw"}, inplace=True
+                )
+                pv_yield_df["datetime_utc"] = pv_yield_df.index
+    
+                # change to list of pydantic objects
+                pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
+    
+                # change to sqlalamcy objects and add pv systems
+                pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
+                for pv_yield_sql in pv_yields_sql:
+                    pv_yield_sql.pv_system = pv_system
+    
+                all_pv_yields = all_pv_yields + pv_yields_sql
+    
+                logger.debug(
+                    f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
+                )
 
     return all_pv_yields
 
+
+def chunks(l, n):
+    n = max(1, n)
+    return (l[i:i+n] for i in range(0, len(l), n))
 
 def save_to_database(session: Session, pv_yields: List[PVYield]):
     """
