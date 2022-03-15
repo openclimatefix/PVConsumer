@@ -69,10 +69,12 @@ def app(db_url: str, filename: Optional[str] = None):
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
-        pv_yields = pull_data_and_save(pv_systems=pv_systems, session=session)
+        pull_data_and_save(pv_systems=pv_systems, session=session)
 
 
-def pull_data_and_save(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None):
+def pull_data_and_save(
+    pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None
+):
     """
     # TODO
 
