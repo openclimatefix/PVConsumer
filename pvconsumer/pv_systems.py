@@ -103,17 +103,18 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
     if len(missing_pv_system) > 0:
         # set up pv output.prg
         pv_output = PVOutput()
-        for pv_system in missing_pv_system:
+        for i, pv_system in enumerate(missing_pv_system):
 
             # get metadata
             metadata = pv_output.get_metadata(
                 pv_system_id=pv_system.pv_system_id, use_data_service=True
             )
             logger.info(
-                f"Fpr py stsem {pv_system.pv_system_id}, setting "
+                f"For py system {pv_system.pv_system_id}, setting "
                 f"latitude {metadata.latitude}, "
                 f"longitude {metadata.longitude}, "
                 f"status_interval_minutes {metadata.status_interval_minutes}, "
+                f"This is the {i}th pv system out of {len(missing_pv_system)}"
             )
             pv_system.latitude = metadata.latitude
             pv_system.longitude = metadata.longitude
@@ -125,6 +126,10 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
             # add to database
             logger.debug(f"Adding pv system {pv_system.pv_system_id} to database")
             session.add(pv_system.to_orm())
+
+            # The first time we do this, we might hit a rate limit of 900,
+            # therefore its good to save this on the go
+            session.commit()
 
     return session.query(PVSystemSQL).all()
 
