@@ -6,7 +6,7 @@ from click.testing import CliRunner
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
 
 import pvconsumer
-from pvconsumer.app import app, pull_data
+from pvconsumer.app import app, pull_data_and_save
 
 
 def test_pull_data(db_session):
@@ -15,8 +15,9 @@ def test_pull_data(db_session):
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
     ]
 
-    pv_yields = pull_data(pv_systems=pv_systems, session=db_session)
+    pull_data_and_save(pv_systems=pv_systems, session=db_session)
 
+    pv_yields = session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0
 
 

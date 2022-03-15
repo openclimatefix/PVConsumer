@@ -71,11 +71,8 @@ def app(db_url: str, filename: Optional[str] = None):
         # 3. Pull data
         pv_yields = pull_data(pv_systems=pv_systems, session=session)
 
-        # 4. Save to database - perhaps check no duplicate data. (for each PV system)
-        save_to_database(session=session, pv_yields=pv_yields)
 
-
-def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None):
+def pull_data_and_save(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None):
     """
     # TODO
 
@@ -91,8 +88,6 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
         datetime_utc = datetime.utcnow()  # add timezone
 
     logger.info(f"Pulling data for pv system {len(pv_systems)} pv systems for {datetime_utc}")
-
-    all_pv_yields = []
 
     n_pv_systems_per_batch = 50
     pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
@@ -162,13 +157,14 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                 for pv_yield_sql in pv_yields_sql:
                     pv_yield_sql.pv_system = pv_system
 
-                all_pv_yields = all_pv_yields + pv_yields_sql
+                all_pv_yields + pv_yields_sql
 
                 logger.debug(
                     f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
                 )
 
-    return all_pv_yields
+                # 4. Save to database - perhaps check no duplicate data. (for each PV system)
+                save_to_database(session=session, pv_yields=pv_yields)
 
 
 def chunks(original_list: List, n: int) -> Tuple[List]:
