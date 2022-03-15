@@ -172,7 +172,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
 
 
 def chunks(original_list: List, n: int) -> Tuple[List]:
-    """ This chunks up a list into a list of list.
+    """This chunks up a list into a list of list.
 
     Each sub list has 'n' elements
     """
