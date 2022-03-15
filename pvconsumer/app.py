@@ -94,7 +94,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
 
     all_pv_yields = []
     
-    n_pv_systems_per_batch = 1
+    n_pv_systems_per_batch = 50
     pv_system_chunks = chunks(l=pv_systems,n=n_pv_systems_per_batch)
     
     for pv_system_chunk in pv_system_chunks:
@@ -109,7 +109,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
         # then this will just get data for 2022-01-02, and therefore missing
         # 2022-01-01 23.57 to 2022-01-02
         date = datetime_utc.date()
-        all_pv_yield_df = pv_output.get_status(
+        all_pv_yield_df = pv_output.get_system_status(
             pv_system_id=pv_system_ids, date=date, use_data_service=True
         )
     
