@@ -9,7 +9,7 @@
 import logging
 import os
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import click
 from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
@@ -140,7 +140,8 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                         logger.debug(pv_yield_df)
                 else:
                     logger.debug(
-                        f"This is the first lot pv yield data for pv system {(pv_system.pv_system_id)}"
+                        f"This is the first lot pv yield data for "
+                        f"pv system {(pv_system.pv_system_id)}"
                     )
 
                 # need columns datetime_utc, solar_generation_kw
@@ -170,13 +171,13 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     return all_pv_yields
 
 
-def chunks(l: List, n:int) -> Tuple(List):
+def chunks(original_list: List, n: int) -> Tuple[List]:
     """ This chunks up a list into a list of list.
 
     Each sub list has 'n' elements
     """
     n = max(1, n)
-    return (l[i : i + n] for i in range(0, len(l), n))
+    return (original_list[i : i + n] for i in range(0, len(original_list), n))
 
 
 def save_to_database(session: Session, pv_yields: List[PVYield]):
