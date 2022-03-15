@@ -113,7 +113,7 @@ def pull_data_and_save(
         for pv_system in pv_system_chunk:
 
             # take only the data we need for system id
-            pv_yield_df = all_pv_yield_df[all_pv_yield_df["system_id"] == pv_system.pv_system_id]
+            pv_yield_df = all_pv_yield_df[all_pv_yield_df["system_id"].astype(int) == pv_system.pv_system_id]
 
             logger.debug(
                 f"Got {len(pv_yield_df)} pv yield for "
