@@ -110,7 +110,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
         # 2022-01-01 23.57 to 2022-01-02
         date = datetime_utc.date()
         all_pv_yield_df = pv_output.get_system_status(
-            pv_system_id=pv_system_ids, date=date, use_data_service=True
+            pv_system_ids=pv_system_ids, date=date, use_data_service=True
         )
 
         for pv_system in pv_system_chunk:
@@ -130,11 +130,11 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                 # filter by last
                 if pv_system.last_pv_yield is not None:
                     last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc
-                    pv_yield_df = pv_yield_df[pv_yield_df.index > last_pv_yield_datetime]
+                    pv_yield_df = pv_yield_df[pv_yield_df['datetime'] > last_pv_yield_datetime]
 
                     if len(pv_yield_df) == 0:
                         logger.debug(
-                            f"No new data avialble after {last_pv_yield_datetime}. "
+                            f"No new data available after {last_pv_yield_datetime}. "
                             f"Last data point was {pv_yield_df.index.max()}"
                         )
                         logger.debug(pv_yield_df)
@@ -144,11 +144,11 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                     )
 
                 # need columns datetime_utc, solar_generation_kw
-                pv_yield_df = pv_yield_df[["instantaneous_power_gen_W"]]
+                pv_yield_df = pv_yield_df[["instantaneous_power_gen_W", "datetime"]]
                 pv_yield_df.rename(
-                    columns={"instantaneous_power_gen_W": "solar_generation_kw"}, inplace=True
+                    columns={"instantaneous_power_gen_W": "solar_generation_kw",
+                             "datetime": "datetime_utc"}, inplace=True
                 )
-                pv_yield_df["datetime_utc"] = pv_yield_df.index
 
                 # change to list of pydantic objects
                 pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]

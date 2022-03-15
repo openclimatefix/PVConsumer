@@ -110,7 +110,7 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
                 pv_system_id=pv_system.pv_system_id, use_data_service=True
             )
             logger.info(
-                f"Fpr py stsem {pv_system.pv_system_id}, setting "
+                f"For py system {pv_system.pv_system_id}, setting "
                 f"latitude {metadata.latitude}, "
                 f"longitude {metadata.longitude}, "
                 f"status_interval_minutes {metadata.status_interval_minutes}, "
