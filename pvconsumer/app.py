@@ -170,8 +170,8 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     return all_pv_yields
 
 
-def chunks(l: List, n:int) -> Tuple(List):
-    """ This chunks up a list into a list of list.
+def chunks(l: List, n: int) -> Tuple(List):
+    """This chunks up a list into a list of list.
 
     Each sub list has 'n' elements
     """

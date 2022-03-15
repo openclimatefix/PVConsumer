@@ -127,7 +127,7 @@ def get_pv_systems(session: Session, filename: Optional[str] = None) -> List[PVS
             logger.debug(f"Adding pv system {pv_system.pv_system_id} to database")
             session.add(pv_system.to_orm())
 
-            # The first time we do this, we might hit a rate limit of 900, 
+            # The first time we do this, we might hit a rate limit of 900,
             # therefore its good to save this on the go
             session.commit()
 
