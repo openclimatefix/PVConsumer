@@ -130,7 +130,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                 # filter by last
                 if pv_system.last_pv_yield is not None:
                     last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc
-                    pv_yield_df = pv_yield_df[pv_yield_df['datetime'] > last_pv_yield_datetime]
+                    pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
 
                     if len(pv_yield_df) == 0:
                         logger.debug(
@@ -146,8 +146,11 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
                 # need columns datetime_utc, solar_generation_kw
                 pv_yield_df = pv_yield_df[["instantaneous_power_gen_W", "datetime"]]
                 pv_yield_df.rename(
-                    columns={"instantaneous_power_gen_W": "solar_generation_kw",
-                             "datetime": "datetime_utc"}, inplace=True
+                    columns={
+                        "instantaneous_power_gen_W": "solar_generation_kw",
+                        "datetime": "datetime_utc",
+                    },
+                    inplace=True,
                 )
 
                 # change to list of pydantic objects
