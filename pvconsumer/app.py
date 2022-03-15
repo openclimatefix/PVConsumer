@@ -167,7 +167,11 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     return all_pv_yields
 
 
-def chunks(l, n):
+def chunks(l: List, n:int) -> Tuple(List):
+    """ This chunks up a list into a list of list.
+
+    Each sub list has 'n' elements
+    """
     n = max(1, n)
     return (l[i : i + n] for i in range(0, len(l), n))
 
