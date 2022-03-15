@@ -95,7 +95,7 @@ def pull_data(pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Opt
     all_pv_yields = []
 
     n_pv_systems_per_batch = 50
-    pv_system_chunks = chunks(l=pv_systems, n=n_pv_systems_per_batch)
+    pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
 
     for pv_system_chunk in pv_system_chunks:
 
