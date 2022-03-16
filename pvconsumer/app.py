@@ -107,7 +107,7 @@ def pull_data_and_save(
         # 2022-01-01 23.57 to 2022-01-02
         date = datetime_utc.date()
         all_pv_yield_df = pv_output.get_system_status(
-            pv_system_ids=pv_system_ids, date=date, use_data_service=True, timezone='Europe/London'
+            pv_system_ids=pv_system_ids, date=date, use_data_service=True, timezone="Europe/London"
         )
 
         for pv_system in pv_system_chunk:
@@ -128,7 +128,9 @@ def pull_data_and_save(
 
                 # filter by last
                 if pv_system.last_pv_yield is not None:
-                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
+                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(
+                        tzinfo=timezone.utc
+                    )
                     pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
 
                     if len(pv_yield_df) == 0:
