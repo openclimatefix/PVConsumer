@@ -8,7 +8,7 @@
 
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 import click
@@ -128,7 +128,7 @@ def pull_data_and_save(
 
                 # filter by last
                 if pv_system.last_pv_yield is not None:
-                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc
+                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
                     pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
 
                     if len(pv_yield_df) == 0:
