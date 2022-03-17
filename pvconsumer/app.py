@@ -42,7 +42,14 @@ logger = logging.getLogger(__name__)
     help="Filename of PV systems ids. Default is saved in pvconsumer/data",
     type=click.STRING,
 )
-def app(db_url: str, filename: Optional[str] = None):
+@click.option(
+    "--provider",
+    default='pvoutput.org',
+    envvar="PROVIDER",
+    help="Name of the PV data provider",
+    type=click.STRING,
+)
+def app(db_url: str, filename: Optional[str] = None, provider:str='pvoutput.org'):
     """
     Run PV consumer app, this collect live PV data and save it to a database.
 
@@ -58,7 +65,7 @@ def app(db_url: str, filename: Optional[str] = None):
         # 1. Read list of PV systems (from local file)
         # and get their refresh times (refresh times can also be stored locally)
         logger.debug("Read list of PV systems (from local file)")
-        pv_systems = get_pv_systems(session=session, filename=filename)
+        pv_systems = get_pv_systems(session=session, filename=filename,provider=provider)
 
         # 2. Find most recent entered data (for each PV system) in OCF database,
         # and filter depending on refresh rate
@@ -69,22 +76,26 @@ def app(db_url: str, filename: Optional[str] = None):
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
-        pull_data_and_save(pv_systems=pv_systems, session=session)
+        pull_data_and_save(pv_systems=pv_systems, session=session, provider=provider)
 
 
 def pull_data_and_save(
-    pv_systems: List[PVSystemSQL], session: Session, datetime_utc: Optional[None] = None
+    pv_systems: List[PVSystemSQL], session: Session, provider:str, datetime_utc: Optional[None] = None
 ):
     """
-    # TODO
+    Pull the pv ield data and save to database
 
-    :param pv_systems:
-    :param session:
-    :param datetime_utc:
-    :return:
+    :param pv_systems: list of pv systems to save
+    :param session: database sessions
+    :param provider: provider name
+    :param datetime_utc: datetime now, this is optional
     """
 
-    pv_output = PVOutput()
+    if provider == 'pvoutput.org':
+        # set up pv output.prg
+        pv_output = PVOutput()
+    else:
+        raise Exception(f'Can not use provider {provider}')
 
     if datetime_utc is None:
         datetime_utc = datetime.utcnow()  # add timezone
@@ -99,16 +110,22 @@ def pull_data_and_save(
         # get all the pv system ids from a a group of pv systems
         pv_system_ids = [pv_system_id.pv_system_id for pv_system_id in pv_system_chunk]
 
-        # lets take the date of the datetime now.
-        # Note that we might miss data from the day before
-        # if this is the first data pull after midnight.
-        # e.g last data pull was at 2022-01-01 23.57, new data pull at 2022-01-02 00.05,
-        # then this will just get data for 2022-01-02, and therefore missing
-        # 2022-01-01 23.57 to 2022-01-02
-        date = datetime_utc.date()
-        all_pv_yield_df = pv_output.get_system_status(
-            pv_system_ids=pv_system_ids, date=date, use_data_service=True, timezone="Europe/London"
-        )
+        if provider == 'pvoutput.org':
+            # set up pv output.prg
+            pv_output = PVOutput()
+
+            # lets take the date of the datetime now.
+            # Note that we might miss data from the day before
+            # if this is the first data pull after midnight.
+            # e.g last data pull was at 2022-01-01 23.57, new data pull at 2022-01-02 00.05,
+            # then this will just get data for 2022-01-02, and therefore missing
+            # 2022-01-01 23.57 to 2022-01-02
+            date = datetime_utc.date()
+            all_pv_yield_df = pv_output.get_system_status(
+                pv_system_ids=pv_system_ids, date=date, use_data_service=True, timezone="Europe/London"
+            )
+        else:
+            raise Exception(f'Can not use provider {provider}')
 
         for pv_system in pv_system_chunk:
 
