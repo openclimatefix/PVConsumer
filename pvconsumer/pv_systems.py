@@ -24,7 +24,7 @@ def load_pv_systems(filename: Optional[str] = None) -> List[PVSystem]:
     """
 
     if filename is None:
-        filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems_10.csv"
+        filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems.csv"
 
     logger.debug(f"Loading local pv systems from {filename}")
 
