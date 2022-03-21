@@ -109,6 +109,7 @@ def pull_data_and_save(
     pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
 
     pv_system_i = 0
+    all_pv_yields_sql = []
     for pv_system_chunk in pv_system_chunks:
 
         # get all the pv system ids from a a group of pv systems
@@ -195,10 +196,17 @@ def pull_data_and_save(
                     f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
                 )
 
-                # 4. Save to database - perhaps check no duplicate data. (for each PV system)
-                save_to_database(session=session, pv_yields=pv_yields_sql)
+                all_pv_yields_sql.append(pv_yields_sql)
+
+                if len(all_pv_yields_sql) > 0:
+                    # 4. Save to database - perhaps check no duplicate data. (for each PV system)
+                    save_to_database(session=session, pv_yields=pv_yields_sql)
+                    all_pv_yields_sql = []
 
                 pv_system_i ++ 1
+
+    # 4. Save to database - perhaps check no duplicate data. (for each PV system)
+    save_to_database(session=session, pv_yields=pv_yields_sql)
 
 
 def chunks(original_list: List, n: int) -> Tuple[List]:
