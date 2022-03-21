@@ -4,5 +4,5 @@ pyyaml
 urllib3
 requests
 nowcasting_datamodel==0.0.11
-pvoutput-ocf==0.1.16
+pvoutput-ocf==0.1.17
 click
