@@ -198,15 +198,15 @@ def pull_data_and_save(
 
                 all_pv_yields_sql.append(pv_yields_sql)
 
-                if len(all_pv_yields_sql) > 0:
+                if len(all_pv_yields_sql) > 100:
                     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
-                    save_to_database(session=session, pv_yields=pv_yields_sql)
+                    save_to_database(session=session, pv_yields=all_pv_yields_sql)
                     all_pv_yields_sql = []
 
                 pv_system_i + +1
 
     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
-    save_to_database(session=session, pv_yields=pv_yields_sql)
+    save_to_database(session=session, pv_yields=all_pv_yields_sql)
 
 
 def chunks(original_list: List, n: int) -> Tuple[List]:
