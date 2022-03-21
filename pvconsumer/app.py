@@ -12,7 +12,8 @@ from datetime import datetime, timezone
 from typing import List, Optional, Tuple
 
 import click
-from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
+from nowcasting_datamodel.connection import DatabaseConnection
+from nowcasting_datamodel.models.base import Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session

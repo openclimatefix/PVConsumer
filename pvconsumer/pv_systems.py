@@ -6,6 +6,8 @@ from typing import List, Optional
 
 import pandas as pd
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
+from nowcasting_datamodel.read_pv import get_latest_pv_yield
+from nowcasting_datamodel.read_pv import get_pv_systems as get_pv_systems_from_db
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
@@ -92,9 +94,11 @@ def get_pv_systems(
     :return: list of pv systems sqlalchemy objects
     """
     # load all pv systems in database
-    pv_systems_sql_db: List[PVSystemSQL] = (
-        session.query(PVSystemSQL).where(PVSystemSQL.provider == provider).all()
+
+    pv_systems_sql_db: List[PVSystemSQL] = get_pv_systems_from_db(
+        provider=provider, session=session
     )
+
     pv_systems_db = [PVSystem.from_orm(pv_system) for pv_system in pv_systems_sql_db]
 
     # load master file
@@ -145,7 +149,13 @@ def get_pv_systems(
             # therefore its good to save this on the go
             session.commit()
 
-    return session.query(PVSystemSQL).where(PVSystemSQL.provider == provider).all()
+    pv_systems = get_pv_systems_from_db(provider=provider, session=session)
+
+    pv_systems = get_latest_pv_yield(
+        session=session, append_to_pv_systems=True, pv_systems=pv_systems
+    )
+
+    return pv_systems
 
 
 def filter_pv_systems_which_have_new_data(
@@ -180,7 +190,7 @@ def filter_pv_systems_which_have_new_data(
     keep_pv_systems = []
     for i, pv_system in enumerate(pv_systems):
 
-        logger.debug(f'Looking at {i}th pv system, out of {len(pv_systems)} pv systems')
+        logger.debug(f"Looking at {i}th pv system, out of {len(pv_systems)} pv systems")
 
         last_pv_yield = pv_system.last_pv_yield
 
@@ -200,8 +210,7 @@ def filter_pv_systems_which_have_new_data(
             keep_pv_systems.append(pv_system)
         else:
             next_datetime_data_available = (
-                timedelta(minutes=pv_system.status_interval_minutes)
-                + last_pv_yield.datetime_utc
+                timedelta(minutes=pv_system.status_interval_minutes) + last_pv_yield.datetime_utc
             )
             if next_datetime_data_available < datetime_utc:
                 logger.debug(

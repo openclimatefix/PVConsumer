@@ -3,6 +3,6 @@ pandas
 pyyaml
 urllib3
 requests
-nowcasting_datamodel==0.0.8
+nowcasting_datamodel==0.0.11
 pvoutput-ocf==0.1.16
 click

@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
+from nowcasting_datamodel.read_pv import get_latest_pv_yield
 
 import pvconsumer
 from pvconsumer.pv_systems import (
@@ -36,7 +37,7 @@ def test_find_missing_pv_systems():
     assert len(pv_systems_missing) == 2
 
 
-def test_filter_pv_systems_which_have_new_data_no_refresh_interval():
+def test_filter_pv_systems_which_have_new_data_no_refresh_interval(db_session):
 
     pv_systems = [
         PVSystem(pv_system_id=1, provider="pvoutput.org").to_orm(),
@@ -44,18 +45,26 @@ def test_filter_pv_systems_which_have_new_data_no_refresh_interval():
         PVSystem(pv_system_id=3, provider="pvoutput.org").to_orm(),
     ]
 
+    pv_systems = get_latest_pv_yield(
+        session=db_session, pv_systems=pv_systems, append_to_pv_systems=True
+    )
+
     pv_systems_keep = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
     assert len(pv_systems_keep) == 3
 
 
-def test_filter_pv_systems_which_have_new_data_no_data():
+def test_filter_pv_systems_which_have_new_data_no_data(db_session):
 
     pv_systems = [
         PVSystem(pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
         PVSystem(pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
         PVSystem(pv_system_id=3, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
     ]
+
+    pv_systems = get_latest_pv_yield(
+        session=db_session, pv_systems=pv_systems, append_to_pv_systems=True
+    )
 
     pv_systems_keep = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
@@ -82,6 +91,9 @@ def test_filter_pv_systems_which_have_new_data(db_session):
     db_session.add_all(pv_systems)
 
     pv_systems: List[PVSystemSQL] = db_session.query(PVSystemSQL).all()
+    pv_systems = get_latest_pv_yield(
+        session=db_session, pv_systems=pv_systems, append_to_pv_systems=True
+    )
 
     #
     #   | last data | refresh | keep?
