@@ -196,7 +196,7 @@ def pull_data_and_save(
                     f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
                 )
 
-                all_pv_yields_sql.append(pv_yields_sql)
+                all_pv_yields_sql = all_pv_yields_sql + pv_yields_sql
 
                 if len(all_pv_yields_sql) > 100:
                     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
