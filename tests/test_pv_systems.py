@@ -30,7 +30,7 @@ def test_find_missing_pv_systems():
     ]
 
     pv_systems_missing = find_missing_pv_systems(
-        pv_systems_local=pv_systems_local, pv_systems_db=pv_systems_db, provider='pvoutput.org'
+        pv_systems_local=pv_systems_local, pv_systems_db=pv_systems_db, provider="pvoutput.org"
     )
 
     assert len(pv_systems_missing) == 2
@@ -99,6 +99,6 @@ def test_filter_pv_systems_which_have_new_data(db_session):
 
 
 def test_get_pv_systems(db_session, filename):
-    pv_systems = get_pv_systems(session=db_session, filename=filename, provider='pvoutput.org')
+    pv_systems = get_pv_systems(session=db_session, filename=filename, provider="pvoutput.org")
 
     assert len(pv_systems)
