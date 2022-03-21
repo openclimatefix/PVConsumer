@@ -6,6 +6,8 @@ from typing import List, Optional
 
 import pandas as pd
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
+from nowcasting_datamodel.read_pv import get_pv_systems as get_pv_systems_from_db
+from nowcasting_datamodel.read_pv import get_latest_pv_yield
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
@@ -92,9 +94,9 @@ def get_pv_systems(
     :return: list of pv systems sqlalchemy objects
     """
     # load all pv systems in database
-    pv_systems_sql_db: List[PVSystemSQL] = (
-        session.query(PVSystemSQL).where(PVSystemSQL.provider == provider).all()
-    )
+
+    pv_systems_sql_db: List[PVSystemSQL] = get_pv_systems_from_db(provider=provider, session=session)
+    
     pv_systems_db = [PVSystem.from_orm(pv_system) for pv_system in pv_systems_sql_db]
 
     # load master file
@@ -144,8 +146,12 @@ def get_pv_systems(
             # The first time we do this, we might hit a rate limit of 900,
             # therefore its good to save this on the go
             session.commit()
+            
+    pv_systems = get_pv_systems_from_db(provider=provider, session=session)
 
-    return session.query(PVSystemSQL).where(PVSystemSQL.provider == provider).all()
+    pv_systems = get_latest_pv_yield(session=session,append_to_pv_systems=True, pv_systems=pv_systems)
+
+    return pv_systems
 
 
 def filter_pv_systems_which_have_new_data(

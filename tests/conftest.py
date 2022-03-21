@@ -4,7 +4,8 @@ import pickle
 from functools import partial
 
 import pytest
-from nowcasting_datamodel.connection import Base_PV, DatabaseConnection
+from nowcasting_datamodel.connection import DatabaseConnection
+from nowcasting_datamodel.models.base import Base_PV
 
 import pvconsumer
 
