@@ -141,7 +141,8 @@ def pull_data_and_save(
         for pv_system in pv_system_chunk:
 
             logger.debug(
-                f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id}) out of {len(pv_systems)}"
+                f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id}), "
+                f"out of {len(pv_systems)}"
             )
 
             # take only the data we need for system id
