@@ -14,6 +14,7 @@ def test_pull_data(db_session):
     pv_systems = [
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
     ]
+    pv_systems[0].last_pv_yield = None
 
     pull_data_and_save(pv_systems=pv_systems, session=db_session, provider="pvoutput.org")
 
