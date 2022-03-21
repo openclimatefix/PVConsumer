@@ -105,6 +105,7 @@ def pull_data_and_save(
     n_pv_systems_per_batch = 50
     pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
 
+    pv_system_i = 0
     for pv_system_chunk in pv_system_chunks:
 
         # get all the pv system ids from a a group of pv systems
@@ -113,6 +114,8 @@ def pull_data_and_save(
         if provider == 'pvoutput.org':
             # set up pv output.prg
             pv_output = PVOutput()
+
+            logger.debug(f'Getting data from {provider}')
 
             # lets take the date of the datetime now.
             # Note that we might miss data from the day before
@@ -128,6 +131,8 @@ def pull_data_and_save(
             raise Exception(f'Can not use provider {provider}')
 
         for pv_system in pv_system_chunk:
+
+            logger.debug(f'Processing {pv_system_i} pv system ({pv_system.pv_system_id})')
 
             # take only the data we need for system id
             pv_yield_df = all_pv_yield_df[
@@ -186,6 +191,8 @@ def pull_data_and_save(
 
                 # 4. Save to database - perhaps check no duplicate data. (for each PV system)
                 save_to_database(session=session, pv_yields=pv_yields_sql)
+
+                pv_system_i ++ 1
 
 
 def chunks(original_list: List, n: int) -> Tuple[List]:
