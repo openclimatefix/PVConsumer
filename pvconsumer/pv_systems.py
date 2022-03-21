@@ -180,6 +180,8 @@ def filter_pv_systems_which_have_new_data(
     keep_pv_systems = []
     for pv_system in pv_systems:
 
+        last_pv_yield = pv_system.last_pv_yield
+
         if pv_system.status_interval_minutes is None:
             # don't know the status interval refresh time, so lets keep it
             logger.debug(
@@ -187,7 +189,7 @@ def filter_pv_systems_which_have_new_data(
                 f"so will be getting data "
             )
             keep_pv_systems.append(pv_system)
-        elif pv_system.last_pv_yield is None:
+        elif last_pv_yield is None:
             # there is no pv yield data for this pv system, so lets keep it
             logger.debug(
                 f"There is no pv yield data for pv systems {pv_system.pv_system_id}, "
@@ -197,12 +199,12 @@ def filter_pv_systems_which_have_new_data(
         else:
             next_datetime_data_available = (
                 timedelta(minutes=pv_system.status_interval_minutes)
-                + pv_system.last_pv_yield.datetime_utc
+                + last_pv_yield.datetime_utc
             )
             if next_datetime_data_available < datetime_utc:
                 logger.debug(
                     f"For pv system {pv_system.pv_system_id} as "
-                    f"last pv yield datetime is {pv_system.last_pv_yield.datetime_utc},"
+                    f"last pv yield datetime is {last_pv_yield.datetime_utc},"
                     f"refresh interval is {pv_system.status_interval_minutes}, "
                     f"so will be getting data"
                 )
@@ -210,7 +212,7 @@ def filter_pv_systems_which_have_new_data(
             else:
                 logger.debug(
                     f"Not keeping pv system {pv_system.pv_system_id} as "
-                    f"last pv yield datetime is {pv_system.last_pv_yield.datetime_utc},"
+                    f"last pv yield datetime is {last_pv_yield.datetime_utc},"
                     f"refresh interval is {pv_system.status_interval_minutes}"
                 )
 
