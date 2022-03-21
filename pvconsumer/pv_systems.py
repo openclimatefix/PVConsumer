@@ -178,7 +178,9 @@ def filter_pv_systems_which_have_new_data(
         datetime_utc = datetime.utcnow()  # add timezone
 
     keep_pv_systems = []
-    for pv_system in pv_systems:
+    for i, pv_system in enumerate(pv_systems):
+
+        logger.debug(f'Looking at {i}th pv system, out of {len(pv_systems)} pv systems')
 
         last_pv_yield = pv_system.last_pv_yield
 
