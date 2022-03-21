@@ -203,7 +203,7 @@ def pull_data_and_save(
                     save_to_database(session=session, pv_yields=all_pv_yields_sql)
                     all_pv_yields_sql = []
 
-                pv_system_i + +1
+                pv_system_i = pv_system_i + 1
 
     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
     save_to_database(session=session, pv_yields=all_pv_yields_sql)
