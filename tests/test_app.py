@@ -22,7 +22,7 @@ def test_pull_data(db_session):
     assert len(pv_yields) > 0
 
 
-def test_app(db_connection, filename):
+def test_app(db_connection, db_connection_forecast, filename):
 
     runner = CliRunner()
     response = runner.invoke(
@@ -33,7 +33,7 @@ def test_app(db_connection, filename):
             "--filename",
             filename,
             "--db-url-forecast",
-            db_connection.url,
+            db_connection_forecast.url,
         ],
     )
     assert response.exit_code == 0, response.exception

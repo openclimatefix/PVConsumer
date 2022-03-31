@@ -5,7 +5,7 @@ from functools import partial
 
 import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.base import Base_PV
+from nowcasting_datamodel.models.base import Base_PV, Base_Forecast
 
 import pvconsumer
 
@@ -16,6 +16,19 @@ def db_connection():
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url, base=Base_PV, echo=False)
+    Base_PV.metadata.create_all(connection.engine)
+
+    yield connection
+
+    Base_PV.metadata.drop_all(connection.engine)
+    
+    
+@pytest.fixture
+def db_connection_forecast():
+
+    url = os.getenv("DB_URL", "sqlite:///test.db")
+
+    connection = DatabaseConnection(url=url, base=Base_Forecast, echo=False)
     Base_PV.metadata.create_all(connection.engine)
 
     yield connection
