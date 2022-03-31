@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
     help="The Database URL where pv data will be saved",
     type=click.STRING,
 )
-@click.command()
 @click.option(
     "--db-url-forecast",
     default=None,
