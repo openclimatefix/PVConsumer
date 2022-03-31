@@ -29,11 +29,11 @@ def db_connection_forecast():
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url, base=Base_Forecast, echo=False)
-    Base_PV.metadata.create_all(connection.engine)
+    Base_Forecast.metadata.create_all(connection.engine)
 
     yield connection
 
-    Base_PV.metadata.drop_all(connection.engine)
+    Base_Forecast.metadata.drop_all(connection.engine)
 
 
 @pytest.fixture(scope="function", autouse=True)
