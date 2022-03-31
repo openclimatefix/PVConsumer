@@ -13,7 +13,7 @@ from typing import List, Optional, Tuple
 
 import click
 from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.base import Base_PV, Base_Forecast
+from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
 from pvoutput import PVOutput
@@ -59,7 +59,12 @@ logger = logging.getLogger(__name__)
     help="Name of the PV data provider",
     type=click.STRING,
 )
-def app(db_url: str, db_url_forecast: str, filename: Optional[str] = None, provider: str = "pvoutput.org"):
+def app(
+    db_url: str,
+    db_url_forecast: str,
+    filename: Optional[str] = None,
+    provider: str = "pvoutput.org",
+):
     """
     Run PV consumer app, this collect live PV data and save it to a database.
 
@@ -248,6 +253,7 @@ def save_to_database(session: Session, pv_yields: List[PVYield]):
 
     session.add_all(pv_yields)
     session.commit()
+
 
 if __name__ == "__main__":
     app()
