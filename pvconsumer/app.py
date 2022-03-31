@@ -91,7 +91,7 @@ def app(db_url: str, db_url_forecast: str, filename: Optional[str] = None, provi
         pull_data_and_save(pv_systems=pv_systems, session=session, provider=provider)
 
     # update latest data
-    with connection.get_session() as session_forecast:
+    with connection_forecast.get_session() as session_forecast:
         update_latest_input_data_last_updated(session=session_forecast, component="pv")
 
 
