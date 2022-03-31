@@ -6,8 +6,8 @@ from typing import List, Optional
 
 import pandas as pd
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
-from nowcasting_datamodel.read_pv import get_latest_pv_yield
-from nowcasting_datamodel.read_pv import get_pv_systems as get_pv_systems_from_db
+from nowcasting_datamodel.read.read_pv import get_latest_pv_yield
+from nowcasting_datamodel.read.read_pv import get_pv_systems as get_pv_systems_from_db
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 

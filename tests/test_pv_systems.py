@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import List
 
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
-from nowcasting_datamodel.read_pv import get_latest_pv_yield
+from nowcasting_datamodel.read.read_pv import get_latest_pv_yield
 
 import pvconsumer
 from pvconsumer.pv_systems import (
