@@ -76,7 +76,7 @@ def app(
     logger.info(f"Running PV Consumer app ({pvconsumer.__version__})")
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
-    connection_forecast = DatabaseConnection(url=db_url, base=Base_Forecast, echo=False)
+    connection_forecast = DatabaseConnection(url=db_url_forecast, base=Base_Forecast, echo=False)
     with connection.get_session() as session:
         # 1. Read list of PV systems (from local file)
         # and get their refresh times (refresh times can also be stored locally)
