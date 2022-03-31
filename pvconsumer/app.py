@@ -237,5 +237,6 @@ def save_to_database(session: Session, pv_yields: List[PVYield]):
 
     update_latest_input_data_last_updated(session=session, component="pv")
 
+
 if __name__ == "__main__":
     app()
