@@ -5,7 +5,7 @@ from functools import partial
 
 import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.base import Base_PV, Base_Forecast
+from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 
 import pvconsumer
 
@@ -21,8 +21,8 @@ def db_connection():
     yield connection
 
     Base_PV.metadata.drop_all(connection.engine)
-    
-    
+
+
 @pytest.fixture
 def db_connection_forecast():
 
