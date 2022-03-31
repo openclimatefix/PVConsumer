@@ -15,6 +15,7 @@ import click
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
+from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
@@ -234,6 +235,7 @@ def save_to_database(session: Session, pv_yields: List[PVYield]):
     session.add_all(pv_yields)
     session.commit()
 
+    update_latest_input_data_last_updated(session=session, component="pv")
 
 if __name__ == "__main__":
     app()
