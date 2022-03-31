@@ -13,7 +13,7 @@ from typing import List, Optional, Tuple
 
 import click
 from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.base import Base_PV
+from nowcasting_datamodel.models.base import Base_PV, Base_Forecast
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
 from pvoutput import PVOutput
@@ -34,7 +34,15 @@ logger = logging.getLogger(__name__)
     "--db-url",
     default=None,
     envvar="DB_URL",
-    help="The Database URL where forecasts will be saved",
+    help="The Database URL where pv data will be saved",
+    type=click.STRING,
+)
+@click.command()
+@click.option(
+    "--db-url-forecast",
+    default=None,
+    envvar="DB_URL_FORECAST",
+    help="The Database URL where update latest data will be saved",
     type=click.STRING,
 )
 @click.option(
@@ -51,11 +59,12 @@ logger = logging.getLogger(__name__)
     help="Name of the PV data provider",
     type=click.STRING,
 )
-def app(db_url: str, filename: Optional[str] = None, provider: str = "pvoutput.org"):
+def app(db_url: str, db_url_forecast: str, filename: Optional[str] = None, provider: str = "pvoutput.org"):
     """
     Run PV consumer app, this collect live PV data and save it to a database.
 
     :param db_url: the Database url to save the PV system data
+    :param db_url_forecast: the Database url to save the Input data last updated
     :param filename: the local file name for the pv systems
     :return:
     """
@@ -63,6 +72,7 @@ def app(db_url: str, filename: Optional[str] = None, provider: str = "pvoutput.o
     logger.info(f"Running PV Consumer app ({pvconsumer.__version__})")
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
+    connection_forecast = DatabaseConnection(url=db_url, base=Base_Forecast, echo=False)
     with connection.get_session() as session:
         # 1. Read list of PV systems (from local file)
         # and get their refresh times (refresh times can also be stored locally)
@@ -79,6 +89,10 @@ def app(db_url: str, filename: Optional[str] = None, provider: str = "pvoutput.o
 
         # 3. Pull data
         pull_data_and_save(pv_systems=pv_systems, session=session, provider=provider)
+
+    # update latest data
+    with connection.get_session() as session_forecast:
+        update_latest_input_data_last_updated(session=session_forecast, component="pv")
 
 
 def pull_data_and_save(
@@ -234,8 +248,6 @@ def save_to_database(session: Session, pv_yields: List[PVYield]):
 
     session.add_all(pv_yields)
     session.commit()
-
-    update_latest_input_data_last_updated(session=session, component="pv")
 
 if __name__ == "__main__":
     app()

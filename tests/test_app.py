@@ -25,7 +25,17 @@ def test_pull_data(db_session):
 def test_app(db_connection, filename):
 
     runner = CliRunner()
-    response = runner.invoke(app, ["--db-url", db_connection.url, "--filename", filename])
+    response = runner.invoke(
+        app,
+        [
+            "--db-url",
+            db_connection.url,
+            "--filename",
+            filename,
+            "--db-url-forecast",
+            db_connection.url,
+        ],
+    )
     assert response.exit_code == 0, response.exception
 
     with db_connection.get_session() as session:
