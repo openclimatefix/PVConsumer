@@ -151,7 +151,7 @@ def get_pv_systems(
 
     pv_systems = get_pv_systems_from_db(provider=provider, session=session)
 
-    yesterday = datetime.now(timezone.utc).date()- timedelta(days=1)
+    yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
     pv_systems = get_latest_pv_yield(
         session=session,
         append_to_pv_systems=True,
