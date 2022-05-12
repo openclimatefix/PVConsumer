@@ -157,7 +157,7 @@ def get_pv_systems(
         append_to_pv_systems=True,
         pv_systems=pv_systems,
         start_datetime_utc=yesterday,
-        start_created_utc=yesterday
+        start_created_utc=yesterday,
     )
 
     return pv_systems
