@@ -1,7 +1,7 @@
 """ PV system functions """
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import pandas as pd
@@ -151,8 +151,13 @@ def get_pv_systems(
 
     pv_systems = get_pv_systems_from_db(provider=provider, session=session)
 
+    yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
     pv_systems = get_latest_pv_yield(
-        session=session, append_to_pv_systems=True, pv_systems=pv_systems
+        session=session,
+        append_to_pv_systems=True,
+        pv_systems=pv_systems,
+        start_datetime_utc=yesterday,
+        start_created_utc=yesterday,
     )
 
     return pv_systems
