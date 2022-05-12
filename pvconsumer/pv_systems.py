@@ -1,7 +1,7 @@
 """ PV system functions """
 import logging
 import os
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import List, Optional
 
 import pandas as pd
