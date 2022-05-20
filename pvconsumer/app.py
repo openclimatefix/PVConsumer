@@ -198,7 +198,7 @@ def pull_data_and_save(
                     )
 
                 # need columns datetime_utc, solar_generation_kw
-                pv_yield_df['solar_generation_kw'] = pv_yield_df['instantaneous_power_gen_W'] / 1000
+                pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
                 pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime"]]
                 pv_yield_df.rename(
                     columns={
