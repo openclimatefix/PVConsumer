@@ -1,10 +1,10 @@
-from nowcasting_datamodel.fake import make_fake_pv_system
-from nowcasting_datamodel.models.pv import PVSystem, PVYield
-import pandas as pd
-
 from datetime import datetime, timezone
 
-from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df, format_pv_data
+import pandas as pd
+from nowcasting_datamodel.fake import make_fake_pv_system
+from nowcasting_datamodel.models.pv import PVSystem, PVYield
+
+from pvconsumer.utils import df_to_list_pv_system, format_pv_data, list_pv_system_to_df
 
 
 def test_list_pv_system_to_df():
