@@ -8,7 +8,7 @@
 
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional, Tuple
 
 import click
@@ -16,6 +16,7 @@ from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
+from pvconsumer.utils import format_pv_data
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
@@ -178,64 +179,7 @@ def pull_data_and_save(
                 logger.warning(f"Did not find any data for {pv_system.pv_system_id} for {date}")
             else:
 
-                # filter by last
-                if pv_system.last_pv_yield is not None:
-                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(
-                        tzinfo=timezone.utc
-                    )
-
-                    # We have seen a bug in pvoutput.org where the last value is 0,
-                    # but then a minute later its gets updated. To solve this,
-                    # we drop the last row if its zero, but not if there are two zeros.
-                    # This is beasue if there are two zeros,
-                    # then the PV system might be actually producing no power
-                    if len(pv_yield_df) > 1:
-                        if (
-                            pv_yield_df.iloc[-1].solar_generation_kw == 0
-                            and pv_yield_df.iloc[-2].solar_generation_kw != 0
-                        ):
-                            logger.debug(
-                                f"Dropping last row of pv data for "
-                                f"{pv_system.pv_system_id} "
-                                f"as last row is 0, but the second to last row is not."
-                            )
-                            pv_yield_df.drop(pv_yield_df.tail(1).index, inplace=True)
-
-                    pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
-
-                    if len(pv_yield_df) == 0:
-                        logger.debug(
-                            f"No new data available after {last_pv_yield_datetime}. "
-                            f"Last data point was {pv_yield_df.index.max()}"
-                        )
-                        logger.debug(pv_yield_df)
-                else:
-                    logger.debug(
-                        f"This is the first lot pv yield data for "
-                        f"pv system {(pv_system.pv_system_id)}"
-                    )
-
-                # need columns datetime_utc, solar_generation_kw
-                pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
-                pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime"]]
-                pv_yield_df.rename(
-                    columns={
-                        "datetime": "datetime_utc",
-                    },
-                    inplace=True,
-                )
-
-                # change to list of pydantic objects
-                pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
-
-                # change to sqlalamcy objects and add pv systems
-                pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
-                for pv_yield_sql in pv_yields_sql:
-                    pv_yield_sql.pv_system = pv_system
-
-                logger.debug(
-                    f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
-                )
+                pv_yields_sql = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
 
                 all_pv_yields_sql = all_pv_yields_sql + pv_yields_sql
 
