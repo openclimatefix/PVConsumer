@@ -183,6 +183,19 @@ def pull_data_and_save(
                     last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(
                         tzinfo=timezone.utc
                     )
+
+                    # We have seen a bug in pvoutput.org where the last value is 0,
+                    # but then a minute later its gets updated. To solve this,
+                    # we drop the last row if its zero, but not if there are two zeros.
+                    # This is beasue if there are two zeros,
+                    # then the PV system might be actually producing no power
+                    if len(pv_yield_df) > 1:
+                        if pv_yield_df.iloc[-1].solar_generation_kw == 0 \
+                            and pv_yield_df.iloc[-2].solar_generation_kw != 0:
+                            logger.debug(f'Dropping last row of pv data for {pv_system.pv_system_id} '
+                                         f'as last row is 0, but the second to last row is not.')
+                            pv_yield_df.drop(df.tail(1).index, inplace=True)
+
                     pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
 
                     if len(pv_yield_df) == 0:
@@ -206,6 +219,7 @@ def pull_data_and_save(
                     },
                     inplace=True,
                 )
+
 
                 # change to list of pydantic objects
                 pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
