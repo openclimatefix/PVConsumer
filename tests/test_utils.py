@@ -29,7 +29,7 @@ def test_pv_yield_df_no_data():
     ]
     pv_systems[0].last_pv_yield = None
 
-    pv_yield_df = pd.DataFrame(columns=['instantaneous_power_gen_W','datetime'])
+    pv_yield_df = pd.DataFrame(columns=["instantaneous_power_gen_W", "datetime"])
 
     pv_yields = format_pv_data(pv_system=pv_systems[0], pv_yield_df=pv_yield_df)
     assert len(pv_yields) == 0
@@ -39,12 +39,13 @@ def test_pv_yield_df():
     pv_system = PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm()
     pv_system.last_pv_yield = None
 
-    pv_yield_df = pd.DataFrame(columns=['instantaneous_power_gen_W','datetime'],
-                               data=[[1,datetime(2022,1,1)]])
+    pv_yield_df = pd.DataFrame(
+        columns=["instantaneous_power_gen_W", "datetime"], data=[[1, datetime(2022, 1, 1)]]
+    )
 
     pv_yields = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
     assert len(pv_yields) == 1
-    assert pv_yields[0].solar_generation_kw == 1/1000
+    assert pv_yields[0].solar_generation_kw == 1 / 1000
 
 
 def test_pv_yield_df_last_pv_yield():
@@ -53,37 +54,50 @@ def test_pv_yield_df_last_pv_yield():
 
     pv_system.last_pv_yield = last_pv_yield
 
-    pv_yield_df = pd.DataFrame(columns=['instantaneous_power_gen_W','datetime'],
-                               data=[[1,datetime(2022,1,1,tzinfo=timezone.utc)],
-                                     [2,datetime(2022,1,2,tzinfo=timezone.utc)]])
+    pv_yield_df = pd.DataFrame(
+        columns=["instantaneous_power_gen_W", "datetime"],
+        data=[
+            [1, datetime(2022, 1, 1, tzinfo=timezone.utc)],
+            [2, datetime(2022, 1, 2, tzinfo=timezone.utc)],
+        ],
+    )
 
     pv_yields = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
     assert len(pv_yields) == 1
-    assert pv_yields[0].solar_generation_kw == 2/1000
+    assert pv_yields[0].solar_generation_kw == 2 / 1000
+
 
 def test_pv_yield_df_0_bug():
 
     pv_system = PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm()
     pv_system.last_pv_yield = None
 
-    pv_yield_df = pd.DataFrame(columns=['instantaneous_power_gen_W','datetime'],
-                               data=[[1,datetime(2022,1,1,tzinfo=timezone.utc)],
-                                     [0,datetime(2022,1,2,tzinfo=timezone.utc)]])
+    pv_yield_df = pd.DataFrame(
+        columns=["instantaneous_power_gen_W", "datetime"],
+        data=[
+            [1, datetime(2022, 1, 1, tzinfo=timezone.utc)],
+            [0, datetime(2022, 1, 2, tzinfo=timezone.utc)],
+        ],
+    )
 
     pv_yields = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
     assert len(pv_yields) == 1
-    assert pv_yields[0].solar_generation_kw == 1/1000
+    assert pv_yields[0].solar_generation_kw == 1 / 1000
+
 
 def test_pv_yield_df_zeros():
 
     pv_system = PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm()
     pv_system.last_pv_yield = None
 
-    pv_yield_df = pd.DataFrame(columns=['instantaneous_power_gen_W','datetime'],
-                               data=[[0,datetime(2022,1,1,tzinfo=timezone.utc)],
-                                     [0,datetime(2022,1,2,tzinfo=timezone.utc)]])
+    pv_yield_df = pd.DataFrame(
+        columns=["instantaneous_power_gen_W", "datetime"],
+        data=[
+            [0, datetime(2022, 1, 1, tzinfo=timezone.utc)],
+            [0, datetime(2022, 1, 2, tzinfo=timezone.utc)],
+        ],
+    )
 
     pv_yields = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
     assert len(pv_yields) == 2
     assert pv_yields[0].solar_generation_kw == 0
-
