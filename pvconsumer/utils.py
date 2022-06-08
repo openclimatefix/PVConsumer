@@ -1,11 +1,10 @@
 """ Utils functions """
+import logging
 from datetime import timezone
 from typing import List
-import logging
 
 import pandas as pd
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
-
 
 logger = logging.getLogger(__name__)
 

@@ -16,12 +16,12 @@ from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
-from pvconsumer.utils import format_pv_data
 from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
+from pvconsumer.utils import format_pv_data
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOGLEVEL", "INFO")),
