@@ -8,7 +8,7 @@
 
 import logging
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional, Tuple
 
 import click
@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
+from pvconsumer.utils import format_pv_data
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOGLEVEL", "INFO")),
@@ -178,46 +179,7 @@ def pull_data_and_save(
                 logger.warning(f"Did not find any data for {pv_system.pv_system_id} for {date}")
             else:
 
-                # filter by last
-                if pv_system.last_pv_yield is not None:
-                    last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(
-                        tzinfo=timezone.utc
-                    )
-                    pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
-
-                    if len(pv_yield_df) == 0:
-                        logger.debug(
-                            f"No new data available after {last_pv_yield_datetime}. "
-                            f"Last data point was {pv_yield_df.index.max()}"
-                        )
-                        logger.debug(pv_yield_df)
-                else:
-                    logger.debug(
-                        f"This is the first lot pv yield data for "
-                        f"pv system {(pv_system.pv_system_id)}"
-                    )
-
-                # need columns datetime_utc, solar_generation_kw
-                pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
-                pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime"]]
-                pv_yield_df.rename(
-                    columns={
-                        "datetime": "datetime_utc",
-                    },
-                    inplace=True,
-                )
-
-                # change to list of pydantic objects
-                pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
-
-                # change to sqlalamcy objects and add pv systems
-                pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
-                for pv_yield_sql in pv_yields_sql:
-                    pv_yield_sql.pv_system = pv_system
-
-                logger.debug(
-                    f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}"
-                )
+                pv_yields_sql = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
 
                 all_pv_yields_sql = all_pv_yields_sql + pv_yields_sql
 
