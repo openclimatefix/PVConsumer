@@ -19,6 +19,7 @@ key = os.getenv('SS_KEY')
 
 
 def raw_to_dataframe(response):
+    """ Reformat response data to dataframe """
 
     lines = response.text.split('\n')
     columns = lines.pop(0).split(',')
@@ -30,7 +31,12 @@ def raw_to_dataframe(response):
 
 
 def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> List[PVSystem]:
+    """
+    Get the pv systesm from solar sheffield
 
+    :param pv_system_ids: filter on pv system id
+    :return:
+    """
     logger.debug('Getting all pv systems')
 
     full_url = f'{url}view_owner_system_params_rounded?user_id={user_id}&key={key}'
@@ -58,6 +64,13 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
 
 
 def get_all_latest_pv_yield_from_solar_sheffield()-> pd.DataFrame:
+    """
+    Get latest pv yields from solar sheffield
+
+    This also pulls teh pv systems and merges them
+
+    :return:
+    """
 
     logger.debug('Getting all pv yields')
     full_url = f'{url}reading_passiv_integrated_5mins?user_id={user_id}&key={key}'
@@ -80,7 +93,6 @@ def get_all_latest_pv_yield_from_solar_sheffield()-> pd.DataFrame:
 
     data_df.rename(columns={'timestamp':'datetime_utc'}, inplace=True)
     data_df.rename(columns={'data': 'solar_generation_kw'}, inplace=True)
-    # data_df.rename(columns={'system_id': 'pv_system_id'}, inplace=True)
 
     return data_df
 
