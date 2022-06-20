@@ -2,7 +2,13 @@ import os
 from datetime import datetime, timezone
 from typing import List
 
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
+from nowcasting_datamodel.models.pv import (
+    PVSystem,
+    PVSystemSQL,
+    PVYield,
+    PVYieldSQL,
+    solar_sheffield_passiv,
+)
 from nowcasting_datamodel.read.read_pv import get_latest_pv_yield
 
 import pvconsumer
@@ -16,6 +22,10 @@ from pvconsumer.pv_systems import (
 
 def test_load_pv_systems():
     _ = load_pv_systems()
+
+
+def test_load_pv_systems_passiv():
+    _ = load_pv_systems(provider=solar_sheffield_passiv)
 
 
 def test_find_missing_pv_systems():
