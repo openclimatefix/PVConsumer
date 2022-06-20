@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:13.6
+    image: postgres:14.2
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -23,6 +23,9 @@ services:
       - API_KEY=$API_KEY
       - SYSTEM_ID=$SYSTEM_ID
       - DATA_SERVICE_URL=https://pvoutput.org/
+      - SS_URL=$SS_URL
+      - SS_USER_ID=$SS_USER_ID
+      - SS_KEY=$SS_KEY
     command: >
       bash -c "pytest --cov=./pvconsumer
       && coverage report -m

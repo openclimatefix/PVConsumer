@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
+from pvconsumer.solar_sheffield_passiv import get_all_latest_pv_yield_from_solar_sheffield
 from pvconsumer.utils import format_pv_data
 
 logging.basicConfig(
@@ -118,6 +119,10 @@ def pull_data_and_save(
     if provider == "pvoutput.org":
         # set up pv output.prg
         pv_output = PVOutput()
+    elif provider == "solar_sheffield_passiv":
+        # get all pv yields from solar sheffield
+        all_pv_yield_df = get_all_latest_pv_yield_from_solar_sheffield()
+        logger.debug(f"Found {len(all_pv_yield_df)} PV yields from solar sheffield passiv")
     else:
         raise Exception(f"Can not use provider {provider}")
 
@@ -136,6 +141,8 @@ def pull_data_and_save(
         # get all the pv system ids from a a group of pv systems
         pv_system_ids = [pv_system_id.pv_system_id for pv_system_id in pv_system_chunk]
 
+        date = datetime_utc.date()
+
         if provider == "pvoutput.org":
             # set up pv output.prg
             pv_output = PVOutput()
@@ -148,20 +155,21 @@ def pull_data_and_save(
             # e.g last data pull was at 2022-01-01 23.57, new data pull at 2022-01-02 00.05,
             # then this will just get data for 2022-01-02, and therefore missing
             # 2022-01-01 23.57 to 2022-01-02
-            date = datetime_utc.date()
             all_pv_yield_df = pv_output.get_system_status(
                 pv_system_ids=pv_system_ids,
                 date=date,
                 use_data_service=True,
                 timezone="Europe/London",
             )
+        elif provider == "solar_sheffield_passiv":
+            pass
         else:
             raise Exception(f"Can not use provider {provider}")
 
         for pv_system in pv_system_chunk:
 
             logger.debug(
-                f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id}), "
+                f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id=}), "
                 f"out of {len(pv_systems)}"
             )
 

@@ -49,6 +49,17 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
     :return: list of pv yield sql objects
     """
 
+    # 0.1 rename
+    if "solar_generation_kw" not in pv_yield_df.columns:
+        pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
+    if "datetime_utc" not in pv_yield_df.columns:
+        pv_yield_df.rename(
+            columns={
+                "datetime": "datetime_utc",
+            },
+            inplace=True,
+        )
+
     # 1. We have seen a bug in pvoutput.org where the last value is 0,
     # but then a minute later its gets updated. To solve this,
     # we drop the last row if its zero, but not if there are two zeros.
@@ -56,8 +67,8 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
     # then the PV system might be actually producing no power
     if len(pv_yield_df) > 1:
         if (
-            pv_yield_df.iloc[-1].instantaneous_power_gen_W == 0
-            and pv_yield_df.iloc[-2].instantaneous_power_gen_W != 0
+            pv_yield_df.iloc[-1].solar_generation_kw == 0
+            and pv_yield_df.iloc[-2].solar_generation_kw != 0
         ):
             logger.debug(
                 f"Dropping last row of pv data for "
@@ -70,7 +81,7 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
     if pv_system.last_pv_yield is not None:
         last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
 
-        pv_yield_df = pv_yield_df[pv_yield_df["datetime"] > last_pv_yield_datetime]
+        pv_yield_df = pv_yield_df[pv_yield_df["datetime_utc"] > last_pv_yield_datetime]
 
         if len(pv_yield_df) == 0:
             logger.debug(
@@ -85,14 +96,8 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
 
     # 3. format in to PVYield objects
     # need columns datetime_utc, solar_generation_kw
-    pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
-    pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime"]]
-    pv_yield_df.rename(
-        columns={
-            "datetime": "datetime_utc",
-        },
-        inplace=True,
-    )
+    pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime_utc"]]
+
     # change to list of pydantic objects
     pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
     # 4. change to sqlalamcy objects and add pv systems
