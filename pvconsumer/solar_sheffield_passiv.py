@@ -95,4 +95,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     data_df.rename(columns={"timestamp": "datetime_utc"}, inplace=True)
     data_df.rename(columns={"data": "solar_generation_kw"}, inplace=True)
 
+    # add timestamp UTC
+    data_df['datetime_utc'] = data_df['datetime_utc'].dt.tz_localize('UTC')
+
     return data_df
