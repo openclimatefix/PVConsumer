@@ -20,6 +20,9 @@ jobs:
         env: # Or as an environment variable
           API_KEY: ${{ secrets.API_KEY }}
           SYSTEM_ID: ${{ secrets.SYSTEM_ID }}
+          SS_USER_ID: ${{ secrets.SS_USER_ID }}
+          SS_URL: ${{ secrets.SS_URL }}
+          SS_KEY: ${{ secrets.SS_KEY }}
 
       - name: Copy coverage
         run: |
