@@ -30,6 +30,3 @@ def test_get_all_latest_pv_yield():
     assert pv_yields["solar_generation_kw"].mean() >= 0
     assert pv_yields.iloc[0].datetime_utc <= datetime.utcnow()
     assert pv_yields.iloc[0].datetime_utc >= datetime.utcnow() - timedelta(minutes=10)
-
-    print(pv_yields)
-    assert 0
