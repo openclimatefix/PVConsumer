@@ -7,9 +7,9 @@ from typing import List
 
 import pandas as pd
 import requests
-from nowcasting_datamodel.models.pv import PVSystem, PVYield
+from nowcasting_datamodel.models.pv import PVSystem
 
-from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
+from pvconsumer.utils import df_to_list_pv_system
 
 logger = logging.getLogger(__name__)
 
