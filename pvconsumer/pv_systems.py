@@ -12,8 +12,8 @@ from pvoutput import PVOutput
 from sqlalchemy.orm import Session
 
 import pvconsumer
-from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
+from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +154,6 @@ def get_pv_systems(
             # The first time we do this, we might hit a rate limit of 900,
             # therefore its good to save this on the go
             session.commit()
-
 
     pv_systems = get_pv_systems_from_db(provider=provider, session=session)
 

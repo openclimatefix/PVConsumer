@@ -21,6 +21,7 @@ def test_pull_data(db_session):
     pv_yields = db_session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0
 
+
 def test_pull_data_solar_sheffield(db_session):
 
     pv_systems = [
@@ -59,7 +60,6 @@ def test_app(db_connection, db_connection_forecast, filename):
         assert len(pv_yields) > 9
         # the app gets multiple values for each pv system.
         # There is a chance this will fail in the early morning when no data is available
-
 
 
 def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield):
