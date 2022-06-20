@@ -20,7 +20,7 @@ key = os.getenv("SS_KEY")
 
 
 def raw_to_dataframe(response):
-    """ Reformat response data to dataframe """
+    """Reformat response data to dataframe"""
 
     lines = response.text.split("\n")
     columns = lines.pop(0).split(",")
@@ -38,7 +38,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     :param pv_system_ids: filter on pv system id
     :return:
     """
-    logger.debug('Getting all pv systems')
+    logger.debug("Getting all pv systems")
 
     full_url = f"{url}view_owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
@@ -64,7 +64,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     return pv_systems
 
 
-def get_all_latest_pv_yield_from_solar_sheffield()-> pd.DataFrame:
+def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     """
     Get latest pv yields from solar sheffield
 
