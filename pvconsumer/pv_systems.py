@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
 import pandas as pd
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL
+from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, pv_output, solar_sheffield_passiv
 from nowcasting_datamodel.read.read_pv import get_latest_pv_yield
 from nowcasting_datamodel.read.read_pv import get_pv_systems as get_pv_systems_from_db
 from pvoutput import PVOutput
@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
+from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
 
 logger = logging.getLogger(__name__)
 
@@ -113,30 +114,35 @@ def get_pv_systems(
 
     if len(missing_pv_system) > 0:
 
-        if provider == "pvoutput.org":
+        if provider == pv_output:
             # set up pv output.prg
-            pv_output = PVOutput()
+            pv_output_data = PVOutput()
+        elif provider == solar_sheffield_passiv:
+            pv_systems = get_all_systems_from_solar_sheffield()
         else:
             raise Exception(f"Can not use provider {provider}")
         for i, pv_system in enumerate(missing_pv_system):
 
             # get metadata
-            if provider == "pvoutput.org":
-                metadata = pv_output.get_metadata(
+            if provider == pv_output:
+                metadata = pv_output_data.get_metadata(
                     pv_system_id=pv_system.pv_system_id, use_data_service=True
                 )
+                logger.info(
+                    f"For py system {pv_system.pv_system_id}, setting "
+                    f"latitude {metadata.latitude}, "
+                    f"longitude {metadata.longitude}, "
+                    f"status_interval_minutes {metadata.status_interval_minutes}, "
+                    f"This is the {i}th pv system out of {len(missing_pv_system)}"
+                )
+                pv_system.latitude = metadata.latitude
+                pv_system.longitude = metadata.longitude
+                pv_system.status_interval_minutes = int(metadata.status_interval_minutes)
+
+            elif provider == solar_sheffield_passiv:
+                pv_system = [s for s in pv_systems if s.pv_system_id == pv_system.pv_system_id][0]
             else:
                 raise Exception(f"Can not use provider {provider}")
-            logger.info(
-                f"For py system {pv_system.pv_system_id}, setting "
-                f"latitude {metadata.latitude}, "
-                f"longitude {metadata.longitude}, "
-                f"status_interval_minutes {metadata.status_interval_minutes}, "
-                f"This is the {i}th pv system out of {len(missing_pv_system)}"
-            )
-            pv_system.latitude = metadata.latitude
-            pv_system.longitude = metadata.longitude
-            pv_system.status_interval_minutes = int(metadata.status_interval_minutes)
 
             # validate
             _ = PVSystem.from_orm(pv_system)
@@ -148,6 +154,7 @@ def get_pv_systems(
             # The first time we do this, we might hit a rate limit of 900,
             # therefore its good to save this on the go
             session.commit()
+
 
     pv_systems = get_pv_systems_from_db(provider=provider, session=session)
 

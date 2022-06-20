@@ -50,3 +50,9 @@ def db_session(db_connection):
 def filename():
     """Test data filename"""
     return os.path.dirname(pvconsumer.__file__) + "/../tests/data/pv_systems.csv"
+
+
+@pytest.fixture
+def filename_solar_sheffield():
+    """Test data filename"""
+    return os.path.dirname(pvconsumer.__file__) + "/../tests/data/pv_systems_solar_sheffield.csv"
