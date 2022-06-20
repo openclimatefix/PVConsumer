@@ -18,7 +18,7 @@ from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 logger = logging.getLogger(__name__)
 
 
-def load_pv_systems(provider:str=pv_output, filename: Optional[str] = None) -> List[PVSystem]:
+def load_pv_systems(provider: str = pv_output, filename: Optional[str] = None) -> List[PVSystem]:
     """
     Load pv systems from file
 
@@ -30,7 +30,9 @@ def load_pv_systems(provider:str=pv_output, filename: Optional[str] = None) -> L
         if provider == pv_output:
             filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems.csv"
         elif provider == solar_sheffield_passiv:
-            filename = os.path.dirname(pvconsumer.__file__) + "/data/pv_systems_solar_sheffield_passiv.csv"
+            filename = (
+                os.path.dirname(pvconsumer.__file__) + "/data/pv_systems_solar_sheffield_passiv.csv"
+            )
 
     logger.debug(f"Loading local pv systems from {filename}")
 
