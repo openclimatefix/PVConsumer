@@ -119,10 +119,10 @@ def pull_data_and_save(
     if provider == "pvoutput.org":
         # set up pv output.prg
         pv_output = PVOutput()
-    elif provider == 'solar_sheffield_passiv':
+    elif provider == "solar_sheffield_passiv":
         # get all pv yields from solar sheffield
         all_pv_yield_df = get_all_latest_pv_yield_from_solar_sheffield()
-        logger.debug(f'Found {len(all_pv_yield_df)} PV yields from solar sheffield passiv')
+        logger.debug(f"Found {len(all_pv_yield_df)} PV yields from solar sheffield passiv")
     else:
         raise Exception(f"Can not use provider {provider}")
 
@@ -161,7 +161,7 @@ def pull_data_and_save(
                 use_data_service=True,
                 timezone="Europe/London",
             )
-        elif provider == 'solar_sheffield_passiv':
+        elif provider == "solar_sheffield_passiv":
             pass
         else:
             raise Exception(f"Can not use provider {provider}")
