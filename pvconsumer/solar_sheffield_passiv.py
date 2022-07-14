@@ -52,10 +52,15 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     data_df.rename(columns={"latitude_rounded": "latitude"}, inplace=True)
 
     data_df["provider"] = "solar_sheffield_passiv"
+    data_df["pv_system_id"] = data_df["pv_system_id"].astype(int)
+
+    # change any none strings to -1, in orientation
+    none_index = data_df["orientation"] == 'None'
+    data_df.loc[none_index, 'orientation'] = '-1'
+    data_df["orientation"] = data_df["orientation"].astype(float)
 
     if pv_system_ids is not None:
         logger.debug(f"Filter for pv system ids {pv_system_ids}")
-        data_df["pv_system_id"] = data_df["pv_system_id"].astype(int)
         data_df = data_df[data_df["pv_system_id"].isin(pv_system_ids)]
     # reformat
 
