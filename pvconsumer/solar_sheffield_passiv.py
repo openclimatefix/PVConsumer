@@ -102,7 +102,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     # change from Watts hours to W
     data_df.loc[:, "solar_generation_w"] = data_df["data"] * 12
     # change from W hours to KW
-    data_df.loc[:, "solar_generation_kw"] = data_df["data"] / 1000
+    data_df.loc[:, "solar_generation_kw"] = data_df["solar_generation_w"] / 1000
 
     # add timestamp UTC
     data_df["datetime_utc"] = data_df["datetime_utc"].dt.tz_localize("UTC")
