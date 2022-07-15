@@ -55,8 +55,8 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     data_df["pv_system_id"] = data_df["pv_system_id"].astype(int)
 
     # change any none strings to Nan, in orientation
-    none_index = data_df["orientation"] == 'None'
-    data_df.loc[none_index, 'orientation'] = 'Nan'
+    none_index = data_df["orientation"] == "None"
+    data_df.loc[none_index, "orientation"] = "Nan"
     data_df["orientation"] = data_df["orientation"].astype(float)
 
     if pv_system_ids is not None:
