@@ -1,4 +1,7 @@
 # PVConsumer
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![codecov](https://codecov.io/gh/openclimatefix/PVConsumer/branch/main/graph/badge.svg?token=R0VM4YBUJS)](https://codecov.io/gh/openclimatefix/PVConsumer)
 
@@ -75,3 +78,25 @@ as some queries can not be fully tested on a `sqlite` database
 - API_KEY: API key for pvoutput.org
 - SYSTEM_ID: System id for pvoutput.org
 - DATA_SERVICE_URL: data service url for pvoutput.org
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="http://lostcoding.com"><img src="https://avatars.githubusercontent.com/u/20285369?v=4?s=100" width="100px;" alt="Brandon Ly"/><br /><sub><b>Brandon Ly</b></sub></a><br /><a href="https://github.com/openclimatefix/PVConsumer/commits?author=branberry" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
