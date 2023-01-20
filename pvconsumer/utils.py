@@ -2,6 +2,7 @@
 import logging
 from datetime import timezone
 from typing import List
+from sqlalchemy.orm import Session
 
 import pandas as pd
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
@@ -114,19 +115,21 @@ class FakeDatabaseConnection:
 
     def __init__(self):
         """
-        Set up fake database connection, this is so we can still do
+        Set up fake database connection
+
+        This is so we can still do
         'with connection.get_session() as sessions:'
         bu session is None
         """
 
         class FakeSession:
-            def __init__(self):
+            def __init__(self): #noqa
                 pass
 
-            def __enter__(self):
+            def __enter__(self): #noqa
                 return None
 
-            def __exit__(self, type, value, traceback):
+            def __exit__(self, type, value, traceback): #noqa
                 pass
 
         self.Session = FakeSession
