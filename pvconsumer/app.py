@@ -72,7 +72,7 @@ logger = logging.getLogger(__name__)
 def app(
     db_url: str,
     db_url_forecast: str,
-    db_url_pv_site: Optiona[str] = None,
+    db_url_pv_site: Optional[str] = None,
     filename: Optional[str] = None,
     provider: str = "pvoutput.org",
 ):
@@ -90,7 +90,7 @@ def app(
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     connection_forecast = DatabaseConnection(url=db_url_forecast, base=Base_Forecast, echo=False)
 
-    if pvsite_datamodel is not None:
+    if db_url_pv_site is not None:
         connection_pv_site = PVSiteDatabaseConnection(url=db_url_forecast, echo=False)
     else:
         connection_pv_site = FakeDatabaseConnection()
