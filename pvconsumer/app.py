@@ -16,16 +16,15 @@ from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 from nowcasting_datamodel.models.pv import PVSystemSQL
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
-from pvconsumer.save import save_to_database, save_to_pv_site_database
 from pvoutput import PVOutput
-from sqlalchemy.orm import Session
-
 from pvsite_datamodel.connection import DatabaseConnection as PVSiteDatabaseConnection
+from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
+from pvconsumer.save import save_to_database, save_to_pv_site_database
 from pvconsumer.solar_sheffield_passiv import get_all_latest_pv_yield_from_solar_sheffield
-from pvconsumer.utils import format_pv_data, FakeDatabaseConnection
+from pvconsumer.utils import FakeDatabaseConnection, format_pv_data
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOGLEVEL", "INFO")),
@@ -90,7 +89,7 @@ def app(
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     connection_forecast = DatabaseConnection(url=db_url_forecast, base=Base_Forecast, echo=False)
-    
+
     if pvsite_datamodel is not None:
         connection_pv_site = PVSiteDatabaseConnection(url=db_url_forecast, echo=False)
     else:
@@ -111,7 +110,12 @@ def app(
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
-        pull_data_and_save(pv_systems=pv_systems, session=session, provider=provider, session_pv_site=session_pv_site)
+        pull_data_and_save(
+            pv_systems=pv_systems,
+            session=session,
+            provider=provider,
+            session_pv_site=session_pv_site,
+        )
 
     # update latest data
     with connection_forecast.get_session() as session_forecast:
@@ -123,7 +127,7 @@ def pull_data_and_save(
     session: Session,
     provider: str,
     datetime_utc: Optional[None] = None,
-    session_pv_site: Optional[Session] = None
+    session_pv_site: Optional[Session] = None,
 ):
     """
     Pull the pv ield data and save to database
@@ -206,7 +210,6 @@ def pull_data_and_save(
             else:
 
                 pv_yields_sql = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
-                
 
                 all_pv_yields_sql = all_pv_yields_sql + pv_yields_sql
 
@@ -214,12 +217,14 @@ def pull_data_and_save(
                     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
                     save_to_database(session=session, pv_yields=all_pv_yields_sql)
                     all_pv_yields_sql = []
-                    
-                # 5. save to pv sites database 
+
+                # 5. save to pv sites database
                 if session_pv_site is not None:
-                    # TODO we are current doing this every round, 
+                    # TODO we are current doing this every round,
                     # we might find we have to batch it like the other save method
-                    save_to_pv_site_database(session=session_pv_site, pv_system=pv_system, pv_yield_df=pv_yield_df)
+                    save_to_pv_site_database(
+                        session=session_pv_site, pv_system=pv_system, pv_yield_df=pv_yield_df
+                    )
 
             pv_system_i = pv_system_i + 1
 

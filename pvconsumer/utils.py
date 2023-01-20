@@ -104,8 +104,8 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
     pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
     for pv_yield_sql in pv_yields_sql:
         pv_yield_sql.pv_system = pv_system
-    logger.debug(f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}")    
-    
+    logger.debug(f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}")
+
     return pv_yields_sql
 
 
@@ -134,4 +134,3 @@ class FakeDatabaseConnection:
     def get_session(self) -> Session:
         """Get sqlalamcy session"""
         return self.Session()
-

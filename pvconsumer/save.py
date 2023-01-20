@@ -1,12 +1,11 @@
-from typing import List
 import logging
+from typing import List
 
 import pandas as pd
-from nowcasting_datamodel.models import PVYield, PVSystem
-from sqlalchemy.orm import Session
-
+from nowcasting_datamodel.models import PVSystem, PVYield
 from pvsite_datamodel.read import get_site
 from pvsite_datamodel.write.generation import insert_generation_values
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -26,15 +25,15 @@ def save_to_database(session: Session, pv_yields: List[PVYield]):
 
 def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df: pd.DataFrame):
     """
-    
+
     Save to pv site database
-    
+
     :param session: pv site databse sessions
     :param pv_system: one pv system
     :param pv_yield_df: pandas datafram of generation values
-    :return: 
+    :return:
     """
-    
+
     if len(pv_yield_df) == 0:
         return
 
