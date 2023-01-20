@@ -2,10 +2,10 @@
 import logging
 from datetime import timezone
 from typing import List
-from sqlalchemy.orm import Session
 
 import pandas as pd
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -123,13 +123,13 @@ class FakeDatabaseConnection:
         """
 
         class FakeSession:
-            def __init__(self): #noqa
+            def __init__(self):  # noqa
                 pass
 
-            def __enter__(self): #noqa
+            def __enter__(self):  # noqa
                 return None
 
-            def __exit__(self, type, value, traceback): #noqa
+            def __exit__(self, type, value, traceback):  # noqa
                 pass
 
         self.Session = FakeSession
