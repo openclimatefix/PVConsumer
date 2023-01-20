@@ -9,7 +9,7 @@ from pvconsumer.solar_sheffield_passiv import (
 def test_get_all_systems():
     pv_systems = get_all_systems_from_solar_sheffield()
 
-    assert len(pv_systems) == 25253
+    assert len(pv_systems) == 30812
     assert pv_systems[0].installed_capacity_kw is not None
 
 
