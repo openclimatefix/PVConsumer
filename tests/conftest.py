@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime, timezone
 from functools import partial
 
+import pandas as pd
 import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
@@ -77,7 +78,7 @@ def filename_solar_sheffield():
 
 
 @pytest.fixture()
-def sites(db_session):
+def sites(db_session, filename):
     """create some fake sites"""
 
     db_session.query(GenerationSQL).delete()
@@ -109,8 +110,9 @@ def sites(db_session):
 
         sites.append(site)
 
-    client_site_ids = [10041, 10020, 4531, 4532]
-    for i in range(0, 4):
+    sites_df = pd.read_csv(filename, index_col=0)
+    client_site_ids = sites_df.index
+    for i in range(0, len(client_site_ids)):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
             client_name="pvoutput.org",
@@ -119,7 +121,7 @@ def sites(db_session):
         site = SiteSQL(
             site_uuid=uuid.uuid4(),
             client_uuid=client.client_uuid,
-            client_site_id=client_site_ids[i],
+            client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
