@@ -90,7 +90,7 @@ def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield,
         assert len(pv_yields) >= 9
         # the app gets multiple values for each pv system.
         # There is a chance this will fail in the early morning when no data is available
-        
+
         # make sure there valyes in the generation table too
         pv_yields = session.query(GenerationSQL).all()
         assert len(pv_yields) >= 9
