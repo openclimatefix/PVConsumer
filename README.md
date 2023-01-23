@@ -78,6 +78,9 @@ as some queries can not be fully tested on a `sqlite` database
 - API_KEY: API key for pvoutput.org
 - SYSTEM_ID: System id for pvoutput.org
 - DATA_SERVICE_URL: data service url for pvoutput.org
+- DB_URL: Save in database to the pv database
+- DB_URL_FORECAST: Let the database not that this service has run, `input_data_last_updatded` table
+- DB_URL_PV_SITE: PV Site database
 
 ## Contributors ✨
 
