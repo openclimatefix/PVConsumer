@@ -46,9 +46,9 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     )
 
     # format dataframe
-    pv_yield_df["site_uuid"] = site.site_uuid
-    pv_yield_df["power_kw"] = pv_yield_df["solar_generation_kw"]
-    pv_yield_df["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
+    pv_yield_df.loc["site_uuid"] = site.site_uuid
+    pv_yield_df.loc["power_kw"] = pv_yield_df["solar_generation_kw"]
+    pv_yield_df.loc["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
 
     # save to database
     insert_generation_values(session=session, generation_values_df=pv_yield_df)
