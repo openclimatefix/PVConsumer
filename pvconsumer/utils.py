@@ -5,6 +5,7 @@ from typing import List
 
 import pandas as pd
 from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -105,4 +106,34 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
     for pv_yield_sql in pv_yields_sql:
         pv_yield_sql.pv_system = pv_system
     logger.debug(f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}")
+
     return pv_yields_sql
+
+
+class FakeDatabaseConnection:
+    """Fake Database connection class"""
+
+    def __init__(self):
+        """
+        Set up fake database connection
+
+        This is so we can still do
+        'with connection.get_session() as sessions:'
+        bu session is None
+        """
+
+        class FakeSession:
+            def __init__(self):  # noqa
+                pass
+
+            def __enter__(self):  # noqa
+                return None
+
+            def __exit__(self, type, value, traceback):  # noqa
+                pass
+
+        self.Session = FakeSession
+
+    def get_session(self) -> Session:
+        """Get sqlalamcy session"""
+        return self.Session()

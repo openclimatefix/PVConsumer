@@ -6,3 +6,4 @@ requests
 nowcasting_datamodel==1.1.54
 pvoutput-ocf==0.1.17
 click
+pvsite_datamodel

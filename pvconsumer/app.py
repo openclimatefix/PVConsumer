@@ -14,15 +14,17 @@ from typing import List, Optional, Tuple
 import click
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
-from nowcasting_datamodel.models.pv import PVSystemSQL, PVYield
+from nowcasting_datamodel.models.pv import PVSystemSQL
 from nowcasting_datamodel.read.read import update_latest_input_data_last_updated
 from pvoutput import PVOutput
+from pvsite_datamodel.connection import DatabaseConnection as PVSiteDatabaseConnection
 from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
+from pvconsumer.save import save_to_database, save_to_pv_site_database
 from pvconsumer.solar_sheffield_passiv import get_all_latest_pv_yield_from_solar_sheffield
-from pvconsumer.utils import format_pv_data
+from pvconsumer.utils import FakeDatabaseConnection, format_pv_data
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOGLEVEL", "INFO")),
@@ -47,6 +49,13 @@ logger = logging.getLogger(__name__)
     type=click.STRING,
 )
 @click.option(
+    "--db-url-pv-site",
+    default=None,
+    envvar="DB_URL_PV_SITE",
+    help="The PV site Database URL where update latest data will be saved",
+    type=click.STRING,
+)
+@click.option(
     "--filename",
     default=None,
     envvar="FILENAME",
@@ -63,6 +72,7 @@ logger = logging.getLogger(__name__)
 def app(
     db_url: str,
     db_url_forecast: str,
+    db_url_pv_site: Optional[str] = None,
     filename: Optional[str] = None,
     provider: str = "pvoutput.org",
 ):
@@ -79,7 +89,13 @@ def app(
 
     connection = DatabaseConnection(url=db_url, base=Base_PV, echo=False)
     connection_forecast = DatabaseConnection(url=db_url_forecast, base=Base_Forecast, echo=False)
-    with connection.get_session() as session:
+
+    if db_url_pv_site is not None:
+        connection_pv_site = PVSiteDatabaseConnection(url=db_url_pv_site, echo=False)
+    else:
+        connection_pv_site = FakeDatabaseConnection()
+
+    with connection.get_session() as session, connection_pv_site.get_session() as session_pv_site:
         # 1. Read list of PV systems (from local file)
         # and get their refresh times (refresh times can also be stored locally)
         logger.debug("Read list of PV systems (from local file)")
@@ -94,7 +110,12 @@ def app(
         pv_systems = filter_pv_systems_which_have_new_data(pv_systems=pv_systems)
 
         # 3. Pull data
-        pull_data_and_save(pv_systems=pv_systems, session=session, provider=provider)
+        pull_data_and_save(
+            pv_systems=pv_systems,
+            session=session,
+            provider=provider,
+            session_pv_site=session_pv_site,
+        )
 
     # update latest data
     with connection_forecast.get_session() as session_forecast:
@@ -106,6 +127,7 @@ def pull_data_and_save(
     session: Session,
     provider: str,
     datetime_utc: Optional[None] = None,
+    session_pv_site: Optional[Session] = None,
 ):
     """
     Pull the pv ield data and save to database
@@ -196,6 +218,14 @@ def pull_data_and_save(
                     save_to_database(session=session, pv_yields=all_pv_yields_sql)
                     all_pv_yields_sql = []
 
+                # 5. save to pv sites database
+                if session_pv_site is not None:
+                    # TODO we are current doing this every round,
+                    # we might find we have to batch it like the other save method
+                    save_to_pv_site_database(
+                        session=session_pv_site, pv_system=pv_system, pv_yield_df=pv_yield_df
+                    )
+
             pv_system_i = pv_system_i + 1
 
     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
@@ -209,19 +239,6 @@ def chunks(original_list: List, n: int) -> Tuple[List]:
     """
     n = max(1, n)
     return (original_list[i : i + n] for i in range(0, len(original_list), n))
-
-
-def save_to_database(session: Session, pv_yields: List[PVYield]):
-    """
-    Save pv data to database
-
-    :param session: database session
-    :param pv_yields: list of pv data
-    """
-    logger.debug(f"Will be adding {len(pv_yields)} pv yield object to database")
-
-    session.add_all(pv_yields)
-    session.commit()
 
 
 if __name__ == "__main__":
