@@ -9,7 +9,7 @@ import pvconsumer
 from pvconsumer.app import app, pull_data_and_save
 
 
-def test_pull_data(db_session):
+def test_pull_data(db_session, sites):
 
     pv_systems = [
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
@@ -22,7 +22,7 @@ def test_pull_data(db_session):
     assert len(pv_yields) > 0
 
 
-def test_pull_data_solar_sheffield(db_session):
+def test_pull_data_solar_sheffield(db_session, sites):
 
     pv_systems = [
         PVSystem(pv_system_id=4383, provider="solar_sheffield_passiv").to_orm(),
@@ -35,7 +35,7 @@ def test_pull_data_solar_sheffield(db_session):
     assert len(pv_yields) > 0
 
 
-def test_app(db_connection, db_connection_forecast, filename):
+def test_app(db_connection, db_connection_forecast, filename, sites):
 
     runner = CliRunner()
     response = runner.invoke(
@@ -62,7 +62,7 @@ def test_app(db_connection, db_connection_forecast, filename):
         # There is a chance this will fail in the early morning when no data is available
 
 
-def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield):
+def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield, sites):
 
     runner = CliRunner()
     response = runner.invoke(
