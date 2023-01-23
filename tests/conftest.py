@@ -87,7 +87,7 @@ def sites(db_session, filename, filename_solar_sheffield):
 
     sites = []
     sites_df = pd.read_csv(filename_solar_sheffield, index_col=0)
-    client_site_ids = sites_df['pv_system_id'].values
+    client_site_ids = sites_df["pv_system_id"].values
     for i in range(0, len(client_site_ids)):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
