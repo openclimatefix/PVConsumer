@@ -34,8 +34,8 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     :param pv_yield_df: pandas datafram of generation values
     :return:
     """
-    
-    logger.debug(f'Saving {len(pv_yield_df)} generation values to pv sites database')
+
+    logger.debug(f"Saving {len(pv_yield_df)} generation values to pv sites database")
 
     if len(pv_yield_df) == 0:
         return
@@ -48,7 +48,7 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     # format dataframe
     pv_yield_df["site_uuid"] = site.site_uuid
     pv_yield_df["power_kw"] = pv_yield_df["solar_generation_kw"]
-    pv_yield_df["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta('5T')
+    pv_yield_df["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
 
     # save to database
     insert_generation_values(session=session, generation_values_df=pv_yield_df)

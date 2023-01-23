@@ -1,16 +1,14 @@
 import inspect
 import os
 import pickle
-from functools import partial
 import uuid
-
 from datetime import datetime, timezone
+from functools import partial
 
 import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
-
-from pvsite_datamodel.sqlmodels import Base, SiteSQL, ClientSQL, GenerationSQL
+from pvsite_datamodel.sqlmodels import Base, ClientSQL, GenerationSQL, SiteSQL
 
 import pvconsumer
 
@@ -46,14 +44,14 @@ def db_connection_forecast():
 @pytest.fixture(scope="function", autouse=True)
 def db_session(db_connection):
     """Creates a new database session for a test."""
-    
+
     connection = db_connection.engine.connect()
     # begin the nested transaction
     transaction = connection.begin()
     # use the connection with the already started transaction
 
     with db_connection.get_session() as s:
-        
+
         yield s
 
         s.close()
@@ -111,7 +109,7 @@ def sites(db_session):
 
         sites.append(site)
 
-    client_site_ids =[10041,10020,4531, 4532]
+    client_site_ids = [10041, 10020, 4531, 4532]
     for i in range(0, 4):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
@@ -127,7 +125,7 @@ def sites(db_session):
             capacity_kw=4,
             created_utc=datetime.now(timezone.utc),
             updated_utc=datetime.now(timezone.utc),
-            ml_id=i+100,
+            ml_id=i + 100,
         )
         db_session.add(client)
         db_session.add(site)
@@ -136,4 +134,3 @@ def sites(db_session):
         sites.append(site)
 
     return sites
-    
