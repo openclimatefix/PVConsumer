@@ -78,7 +78,7 @@ def filename_solar_sheffield():
 
 
 @pytest.fixture()
-def sites(db_session, filename):
+def sites(db_session, filename, filename_solar_sheffield):
     """create some fake sites"""
 
     db_session.query(GenerationSQL).delete()
@@ -86,7 +86,8 @@ def sites(db_session, filename):
     db_session.query(ClientSQL).delete()
 
     sites = []
-    client_site_ids = [4383, 4777, 4531, 4569, 4789, 4813, 4834, 4837, 4872]
+    sites_df = pd.read_csv(filename_solar_sheffield, index_col=0)
+    client_site_ids = sites_df['pv_system_id'].values
     for i in range(0, len(client_site_ids)):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
@@ -96,7 +97,7 @@ def sites(db_session, filename):
         site = SiteSQL(
             site_uuid=uuid.uuid4(),
             client_uuid=client.client_uuid,
-            client_site_id=client_site_ids[i],
+            client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
