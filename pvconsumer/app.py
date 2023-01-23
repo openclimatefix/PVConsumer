@@ -91,7 +91,7 @@ def app(
     connection_forecast = DatabaseConnection(url=db_url_forecast, base=Base_Forecast, echo=False)
 
     if db_url_pv_site is not None:
-        connection_pv_site = PVSiteDatabaseConnection(url=db_url_forecast, echo=False)
+        connection_pv_site = PVSiteDatabaseConnection(url=db_url_pv_site, echo=False)
     else:
         connection_pv_site = FakeDatabaseConnection()
 
