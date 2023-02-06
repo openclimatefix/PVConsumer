@@ -29,7 +29,6 @@ def test_load_pv_systems_passiv():
 
 
 def test_find_missing_pv_systems():
-
     pv_systems_local = [
         PVSystem(pv_system_id=1, provider="pvoutput.org"),
         PVSystem(pv_system_id=2, provider="pvoutput.org"),
@@ -48,7 +47,6 @@ def test_find_missing_pv_systems():
 
 
 def test_filter_pv_systems_which_have_new_data_no_refresh_interval(db_session):
-
     pv_systems = [
         PVSystem(pv_system_id=1, provider="pvoutput.org").to_orm(),
         PVSystem(pv_system_id=2, provider="pvoutput.org").to_orm(),
@@ -65,7 +63,6 @@ def test_filter_pv_systems_which_have_new_data_no_refresh_interval(db_session):
 
 
 def test_filter_pv_systems_which_have_new_data_no_data(db_session):
-
     pv_systems = [
         PVSystem(pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
         PVSystem(pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
@@ -82,7 +79,6 @@ def test_filter_pv_systems_which_have_new_data_no_data(db_session):
 
 
 def test_filter_pv_systems_which_have_new_data(db_session):
-
     pv_yield_0 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1).to_orm()
     pv_yield_1 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2).to_orm()
     pv_yield_2 = PVYield(datetime_utc=datetime(2022, 1, 1, 0, 4), solar_generation_kw=3).to_orm()

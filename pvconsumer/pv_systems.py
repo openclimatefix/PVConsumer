@@ -118,7 +118,6 @@ def get_pv_systems(
     logger.debug(f"There are {len(missing_pv_system)} pv systems to add to the database")
 
     if len(missing_pv_system) > 0:
-
         if provider == pv_output:
             # set up pv output.prg
             pv_output_data = PVOutput()
@@ -127,7 +126,6 @@ def get_pv_systems(
         else:
             raise Exception(f"Can not use provider {provider}")
         for i, pv_system in enumerate(missing_pv_system):
-
             # get metadata
             if provider == pv_output:
                 metadata = pv_output_data.get_metadata(
@@ -205,7 +203,6 @@ def filter_pv_systems_which_have_new_data(
 
     keep_pv_systems = []
     for i, pv_system in enumerate(pv_systems):
-
         logger.debug(f"Looking at {i}th pv system, out of {len(pv_systems)} pv systems")
 
         last_pv_yield = pv_system.last_pv_yield

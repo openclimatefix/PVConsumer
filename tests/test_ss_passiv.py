@@ -14,7 +14,6 @@ def test_get_all_systems():
 
 
 def test_get_all_systems_filter():
-
     pv_systems = get_all_systems_from_solar_sheffield(pv_system_ids=[52, 64, 65])
 
     assert len(pv_systems) == 3

@@ -16,7 +16,6 @@ import pvconsumer
 
 @pytest.fixture
 def db_connection():
-
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url, base=Base_PV, echo=False)
@@ -31,7 +30,6 @@ def db_connection():
 
 @pytest.fixture(scope="session")
 def db_connection_forecast():
-
     url = os.getenv("DB_URL", "sqlite:///test.db")
 
     connection = DatabaseConnection(url=url, base=Base_Forecast, echo=False)
@@ -52,7 +50,6 @@ def db_session(db_connection):
     # use the connection with the already started transaction
 
     with db_connection.get_session() as s:
-
         yield s
 
         s.close()
