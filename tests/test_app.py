@@ -1,13 +1,8 @@
-import os
-from datetime import datetime, timezone
-from typing import List
-
 import pytest
 from click.testing import CliRunner
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
+from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYieldSQL
 from pvsite_datamodel.sqlmodels import GenerationSQL
 
-import pvconsumer
 from pvconsumer.app import app, pull_data_and_save
 
 

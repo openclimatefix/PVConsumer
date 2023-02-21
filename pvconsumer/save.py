@@ -4,7 +4,7 @@ from typing import List
 
 import pandas as pd
 from nowcasting_datamodel.models import PVSystem, PVYield
-from pvsite_datamodel.read.site import get_site
+from pvsite_datamodel.read.site import get_site_by_client_site_id
 from pvsite_datamodel.write.generation import insert_generation_values
 from sqlalchemy.orm import Session
 
@@ -42,8 +42,10 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
         return
 
     # get site from the pv_system
-    site = get_site(
-        session=session, client_name=pv_system.provider, client_id=pv_system.pv_system_id
+    site = get_site_by_client_site_id(
+        session=session,
+        client_name=pv_system.provider,
+        client_id=pv_system.pv_system_id,
     )
 
     # format dataframe
@@ -52,4 +54,4 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     pv_yield_df["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
 
     # save to database
-    insert_generation_values(session=session, generation_values_df=pv_yield_df)
+    insert_generation_values(session, pv_yield_df)

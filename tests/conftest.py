@@ -1,10 +1,6 @@
 import contextlib
-import inspect
 import os
-import pickle
 import uuid
-from datetime import datetime, timezone
-from functools import partial
 
 import pandas as pd
 import pytest
@@ -98,17 +94,13 @@ def sites(db_session, filename, filename_solar_sheffield):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
             client_name="solar_sheffield_passiv",
-            created_utc=datetime.now(timezone.utc),
         )
         site = SiteSQL(
-            site_uuid=uuid.uuid4(),
             client_uuid=client.client_uuid,
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
-            created_utc=datetime.now(timezone.utc),
-            updated_utc=datetime.now(timezone.utc),
             ml_id=i,
         )
         db_session.add(client)
@@ -123,17 +115,13 @@ def sites(db_session, filename, filename_solar_sheffield):
         client = ClientSQL(
             client_uuid=uuid.uuid4(),
             client_name="pvoutput.org",
-            created_utc=datetime.now(timezone.utc),
         )
         site = SiteSQL(
-            site_uuid=uuid.uuid4(),
             client_uuid=client.client_uuid,
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
-            created_utc=datetime.now(timezone.utc),
-            updated_utc=datetime.now(timezone.utc),
             ml_id=i + 100,
         )
         db_session.add(client)

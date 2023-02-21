@@ -150,22 +150,20 @@ def pull_data_and_save(
 
     if datetime_utc is None:
         datetime_utc = datetime.utcnow()  # add timezone
+    date = datetime_utc.date()
 
-    logger.info(f"Pulling data for pv system {len(pv_systems)} pv systems for {datetime_utc}")
+    logger.info(f"Pulling data for pv system {len(pv_systems)} pv systems for {date}")
 
     n_pv_systems_per_batch = 50
     pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
 
-    pv_system_i = 0
     all_pv_yields_sql = []
     for pv_system_chunk in pv_system_chunks:
         # get all the pv system ids from a a group of pv systems
         pv_system_ids = [pv_system_id.pv_system_id for pv_system_id in pv_system_chunk]
 
-        date = datetime_utc.date()
-
         if provider == "pvoutput.org":
-            # set up pv output.prg
+            # set up pv output.org
             pv_output = PVOutput()
 
             logger.debug(f"Getting data from {provider}")
@@ -187,9 +185,9 @@ def pull_data_and_save(
         else:
             raise Exception(f"Can not use provider {provider}")
 
-        for pv_system in pv_system_chunk:
+        for i, pv_system in enumerate(pv_system_chunk):
             logger.debug(
-                f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id=}), "
+                f"Processing {i}th pv system ({pv_system.pv_system_id=}), "
                 f"out of {len(pv_systems)}"
             )
 
@@ -222,8 +220,7 @@ def pull_data_and_save(
                     save_to_pv_site_database(
                         session=session_pv_site, pv_system=pv_system, pv_yield_df=pv_yield_df
                     )
-
-            pv_system_i = pv_system_i + 1
+                    session.commit()
 
     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
     save_to_database(session=session, pv_yields=all_pv_yields_sql)

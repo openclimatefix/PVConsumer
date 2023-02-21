@@ -87,13 +87,13 @@ Format the python codebase **in place**.
 Run only the tests that don't call any live API.
 
 ```bash
-pytest tests -m "no liveapi"
+poetry run pytest tests -m "not liveapi"
 ```
 
 Run all the tests (the tests marked `liveapi` require the environment variables to be set, see next section).
 
 ```bash
-pytest tests
+poetry run pytest tests
 ```
 
 ## Environmental Variables

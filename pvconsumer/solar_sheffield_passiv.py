@@ -73,7 +73,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     """
     Get latest pv yields from solar sheffield
 
-    This also pulls teh pv systems and merges them
+    This also pulls the pv systems and merges them
 
     :return:
     """
