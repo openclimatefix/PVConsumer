@@ -9,13 +9,17 @@ ARG GIT_PYTHON_REFRESH=quiet
 #    && apt-get autoclean && apt-get autoremove \
 #    > /dev/null
 
-# copy files
-COPY setup.py app/setup.py
-COPY README.md app/README.md
-COPY requirements.txt app/requirements.txt
 
-# install requirements
-RUN pip install -r app/requirements.txt
+# Install poetry.
+RUN pip install "poetry==1.3.2" --no-cache-dir
+
+# Copy files.
+COPY pyproject.toml app/pyproject.toml
+COPY README.md app/README.md
+COPY poetry.lock app/poetry.lock
+
+# Install python requirements.
+RUN poetry install --witout dev --no-cache
 
 # copy library files
 COPY pvconsumer/ app/pvconsumer/

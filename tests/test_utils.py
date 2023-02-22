@@ -23,7 +23,6 @@ def test_df_to_list_pv_system():
 
 
 def test_pv_yield_df_no_data():
-
     pv_systems = [
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
     ]
@@ -68,7 +67,6 @@ def test_pv_yield_df_last_pv_yield():
 
 
 def test_pv_yield_df_0_bug():
-
     pv_system = PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm()
     pv_system.last_pv_yield = None
 
@@ -86,7 +84,6 @@ def test_pv_yield_df_0_bug():
 
 
 def test_pv_yield_df_zeros():
-
     pv_system = PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm()
     pv_system.last_pv_yield = None
 

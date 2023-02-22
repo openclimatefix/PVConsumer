@@ -1,20 +1,31 @@
 # PVConsumer
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![codecov](https://codecov.io/gh/openclimatefix/PVConsumer/branch/main/graph/badge.svg?token=R0VM4YBUJS)](https://codecov.io/gh/openclimatefix/PVConsumer)
 
-Consumer PV data from pvoutput.org. THe idea is to expand to different data sources in the future.
+Consumer PV data from pvoutput.org. The idea is to expand to different data sources in the future.
 
 
 # Live
 
 This application pulls live data from PV output.org and stores it in a database
 
+## Dependencies
+
+* [poetry][poetry]
+
+## Run locally
+
 To run the application locally
+
 ```bash
-python pvconsumer/app.py
+# Install the python dependencies
+poetry install
+
+poetry run pvconsumer/app.py
 ```
 
 ## Logic
@@ -61,6 +72,16 @@ The app has the following high-level strucuture
     C4 --> C5
 
 ```
+
+## Code style
+
+Format the python codebase **in place**.
+
+```bash
+./format.sh
+```
+
+
 ## 🩺 Testing
 
 Run only the tests that don't call any live API.
@@ -106,3 +127,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+[poetry]: https://python-poetry.org/

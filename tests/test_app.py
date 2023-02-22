@@ -18,9 +18,7 @@ def test_pull_data(db_session, sites):
     ]
     pv_systems[0].last_pv_yield = None
 
-    pull_data_and_save(
-        pv_systems=pv_systems, session=db_session, provider="pvoutput.org"
-    )
+    pull_data_and_save(pv_systems=pv_systems, session=db_session, provider="pvoutput.org")
 
     pv_yields = db_session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0
@@ -33,9 +31,7 @@ def test_pull_data_solar_sheffield(db_session, sites):
     ]
     pv_systems[0].last_pv_yield = None
 
-    pull_data_and_save(
-        pv_systems=pv_systems, session=db_session, provider="solar_sheffield_passiv"
-    )
+    pull_data_and_save(pv_systems=pv_systems, session=db_session, provider="solar_sheffield_passiv")
 
     pv_yields = db_session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0

@@ -67,15 +67,9 @@ def test_filter_pv_systems_which_have_new_data_no_refresh_interval(db_session):
 
 def test_filter_pv_systems_which_have_new_data_no_data(db_session):
     pv_systems = [
-        PVSystem(
-            pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5
-        ).to_orm(),
-        PVSystem(
-            pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5
-        ).to_orm(),
-        PVSystem(
-            pv_system_id=3, provider="pvoutput.org", status_interval_minutes=5
-        ).to_orm(),
+        PVSystem(pv_system_id=1, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
+        PVSystem(pv_system_id=2, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
+        PVSystem(pv_system_id=3, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
     ]
 
     pv_systems = get_latest_pv_yield(
@@ -88,26 +82,14 @@ def test_filter_pv_systems_which_have_new_data_no_data(db_session):
 
 
 def test_filter_pv_systems_which_have_new_data(db_session):
-    pv_yield_0 = PVYield(
-        datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1
-    ).to_orm()
-    pv_yield_1 = PVYield(
-        datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2
-    ).to_orm()
-    pv_yield_2 = PVYield(
-        datetime_utc=datetime(2022, 1, 1, 0, 4), solar_generation_kw=3
-    ).to_orm()
+    pv_yield_0 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=1).to_orm()
+    pv_yield_1 = PVYield(datetime_utc=datetime(2022, 1, 1), solar_generation_kw=2).to_orm()
+    pv_yield_2 = PVYield(datetime_utc=datetime(2022, 1, 1, 0, 4), solar_generation_kw=3).to_orm()
 
     pv_systems = [
-        PVSystem(
-            pv_system_id=1, provider="pvoutput.org", status_interval_minutes=4
-        ).to_orm(),
-        PVSystem(
-            pv_system_id=2, provider="pvoutput.org", status_interval_minutes=1
-        ).to_orm(),
-        PVSystem(
-            pv_system_id=3, provider="pvoutput.org", status_interval_minutes=5
-        ).to_orm(),
+        PVSystem(pv_system_id=1, provider="pvoutput.org", status_interval_minutes=4).to_orm(),
+        PVSystem(pv_system_id=2, provider="pvoutput.org", status_interval_minutes=1).to_orm(),
+        PVSystem(pv_system_id=3, provider="pvoutput.org", status_interval_minutes=5).to_orm(),
     ]
 
     pv_yield_0.pv_system = pv_systems[0]
@@ -140,8 +122,6 @@ def test_filter_pv_systems_which_have_new_data(db_session):
 
 @pytest.mark.liveapi
 def test_get_pv_systems(db_session, filename):
-    pv_systems = get_pv_systems(
-        session=db_session, filename=filename, provider="pvoutput.org"
-    )
+    pv_systems = get_pv_systems(session=db_session, filename=filename, provider="pvoutput.org")
 
     assert len(pv_systems)

@@ -159,7 +159,6 @@ def pull_data_and_save(
     pv_system_i = 0
     all_pv_yields_sql = []
     for pv_system_chunk in pv_system_chunks:
-
         # get all the pv system ids from a a group of pv systems
         pv_system_ids = [pv_system_id.pv_system_id for pv_system_id in pv_system_chunk]
 
@@ -189,7 +188,6 @@ def pull_data_and_save(
             raise Exception(f"Can not use provider {provider}")
 
         for pv_system in pv_system_chunk:
-
             logger.debug(
                 f"Processing {pv_system_i}th pv system ({pv_system.pv_system_id=}), "
                 f"out of {len(pv_systems)}"
@@ -208,7 +206,6 @@ def pull_data_and_save(
             if len(pv_yield_df) == 0:
                 logger.warning(f"Did not find any data for {pv_system.pv_system_id} for {date}")
             else:
-
                 pv_yields_sql = format_pv_data(pv_system=pv_system, pv_yield_df=pv_yield_df)
 
                 all_pv_yields_sql = all_pv_yields_sql + pv_yields_sql

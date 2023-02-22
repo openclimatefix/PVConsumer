@@ -1,3 +1,32 @@
+[tool.poetry]
+name = "pvconsumer"
+authors = ["Open Climate Fix"]
+description = "Consumer for PV data from pvoutput.org."
+version = "0.1.16"
+readme = "README.md"
+packages = [{include = "pvconsumer"}]
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pvoutput-ocf = "0.1.17"
+click = "^8.1.3"
+requests = "^2.28.2"
+pandas = "^1.5.3"
+nowcasting-datamodel = "1.1.54"
+pvsite-datamodel = "0.1.7"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
+isort = "^5.12.0"
+black = "^23.1.0"
+testcontainers-postgres = "^0.0.1rc1"
+pytest-cov = "^4.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.pytest.ini_options]
 markers = [
     "liveapi: Call some API, implying that they need credentials to be set up"
@@ -5,3 +34,7 @@ markers = [
 
 [tool.isort]
 profile = "black"
+line_length = 100
+
+[tool.black]
+line-length = 100
