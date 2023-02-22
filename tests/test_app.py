@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone
 from typing import List
 
+import pytest
 from click.testing import CliRunner
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
 from pvsite_datamodel.sqlmodels import GenerationSQL
@@ -10,34 +11,38 @@ import pvconsumer
 from pvconsumer.app import app, pull_data_and_save
 
 
+@pytest.mark.liveapi
 def test_pull_data(db_session, sites):
-
     pv_systems = [
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
     ]
     pv_systems[0].last_pv_yield = None
 
-    pull_data_and_save(pv_systems=pv_systems, session=db_session, provider="pvoutput.org")
+    pull_data_and_save(
+        pv_systems=pv_systems, session=db_session, provider="pvoutput.org"
+    )
 
     pv_yields = db_session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0
 
 
+@pytest.mark.liveapi
 def test_pull_data_solar_sheffield(db_session, sites):
-
     pv_systems = [
         PVSystem(pv_system_id=4383, provider="solar_sheffield_passiv").to_orm(),
     ]
     pv_systems[0].last_pv_yield = None
 
-    pull_data_and_save(pv_systems=pv_systems, session=db_session, provider="solar_sheffield_passiv")
+    pull_data_and_save(
+        pv_systems=pv_systems, session=db_session, provider="solar_sheffield_passiv"
+    )
 
     pv_yields = db_session.query(PVYieldSQL).all()
     assert len(pv_yields) > 0
 
 
+@pytest.mark.liveapi
 def test_app(db_connection, db_connection_forecast, filename, sites):
-
     runner = CliRunner()
     response = runner.invoke(
         app,
@@ -63,8 +68,8 @@ def test_app(db_connection, db_connection_forecast, filename, sites):
         # There is a chance this will fail in the early morning when no data is available
 
 
+@pytest.mark.liveapi
 def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield, sites):
-
     runner = CliRunner()
     response = runner.invoke(
         app,

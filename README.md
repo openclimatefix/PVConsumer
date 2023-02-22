@@ -63,14 +63,17 @@ The app has the following high-level strucuture
 ```
 ## 🩺 Testing
 
-Tests are run by using the following command
+Run only the tests that don't call any live API.
+
 ```bash
-docker-compose -f test-docker-compose.yml run pvconsumer
+pytest tests -m "no liveapi"
 ```
 
-These sets up `postgres` in a docker container and runs the tests in another docker container.
-This slightly more complicated testing framework is needed (compared to running `pytest`)
-as some queries can not be fully tested on a `sqlite` database
+Run all the tests (the tests marked `liveapi` require the environment variables to be set, see next section).
+
+```bash
+pytest tests
+```
 
 ## Environmental Variables
 

@@ -1,3 +1,4 @@
+import contextlib
 import inspect
 import os
 import pickle
@@ -10,36 +11,42 @@ import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
 from pvsite_datamodel.sqlmodels import Base, ClientSQL, GenerationSQL, SiteSQL
+from testcontainers.postgres import PostgresContainer
 
 import pvconsumer
 
 
+@contextlib.contextmanager
+def postgresql_database(bases: list):
+    """Reusable context manager to create a database with tables and return a connection.
+
+    Automatically cleans up after itself.
+    """
+    with PostgresContainer("postgres:14.5") as postgres:
+        url = postgres.get_connection_url()
+        db_conn = DatabaseConnection(url, echo=False)
+        engine = db_conn.engine
+        for base in bases:
+            base.metadata.create_all(engine)
+
+        yield db_conn
+
+        for base in bases:
+            base.metadata.drop_all(db_conn.engine)
+
+        engine.dispose()
+
+
 @pytest.fixture
-def db_connection():
-
-    url = os.getenv("DB_URL", "sqlite:///test.db")
-
-    connection = DatabaseConnection(url=url, base=Base_PV, echo=False)
-    Base_PV.metadata.create_all(connection.engine)
-    Base.metadata.create_all(connection.engine)
-
-    yield connection
-
-    Base_PV.metadata.drop_all(connection.engine)
-    Base.metadata.create_all(connection.engine)
+def db_connection(scope="session"):
+    with postgresql_database([Base_PV, Base]) as db_conn:
+        yield db_conn
 
 
 @pytest.fixture(scope="session")
 def db_connection_forecast():
-
-    url = os.getenv("DB_URL", "sqlite:///test.db")
-
-    connection = DatabaseConnection(url=url, base=Base_Forecast, echo=False)
-    Base_Forecast.metadata.create_all(connection.engine)
-
-    yield connection
-
-    Base_Forecast.metadata.drop_all(connection.engine)
+    with postgresql_database([Base_Forecast]) as db_conn:
+        yield db_conn
 
 
 @pytest.fixture(scope="function", autouse=True)
@@ -52,7 +59,6 @@ def db_session(db_connection):
     # use the connection with the already started transaction
 
     with db_connection.get_session() as s:
-
         yield s
 
         s.close()
@@ -74,7 +80,10 @@ def filename():
 @pytest.fixture
 def filename_solar_sheffield():
     """Test data filename"""
-    return os.path.dirname(pvconsumer.__file__) + "/../tests/data/pv_systems_solar_sheffield.csv"
+    return (
+        os.path.dirname(pvconsumer.__file__)
+        + "/../tests/data/pv_systems_solar_sheffield.csv"
+    )
 
 
 @pytest.fixture()

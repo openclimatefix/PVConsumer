@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+markers = [
+    "liveapi: Call some API, implying that they need credentials to be set up"
+]
+
+[tool.isort]
+profile = "black"
