@@ -5,4 +5,4 @@ jobs:
   call-run-docker-release:
     uses: openclimatefix/.github/.github/workflows/build-docker.yml@main
     with:
-      docker_file: infrastructure/Dockerfile
+      docker_file: infrastructure/docker/Dockerfile
