@@ -2,7 +2,7 @@
 name = "pvconsumer"
 authors = ["Open Climate Fix"]
 description = "Consumer for PV data from pvoutput.org."
-version = "0.1.19"
+version = "0.1.20"
 readme = "README.md"
 packages = [{include = "pvconsumer"}]
 
