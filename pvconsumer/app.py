@@ -220,7 +220,7 @@ def pull_data_and_save(
                     save_to_pv_site_database(
                         session=session_pv_site, pv_system=pv_system, pv_yield_df=pv_yield_df
                     )
-                    session.commit()
+                    session_pv_site.commit()
 
     # 4. Save to database - perhaps check no duplicate data. (for each PV system)
     save_to_database(session=session, pv_yields=all_pv_yields_sql)
