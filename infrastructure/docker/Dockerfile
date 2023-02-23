@@ -25,7 +25,7 @@ COPY pvconsumer/ app/pvconsumer/
 WORKDIR /app
 
 # Install python requirements.
-RUN poetry install --witout dev --no-cache
+RUN poetry install --no-cache
 
 # install library
 RUN pip install -e .
