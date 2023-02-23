@@ -45,13 +45,16 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     site = get_site_by_client_site_id(
         session=session,
         client_name=pv_system.provider,
-        client_id=pv_system.pv_system_id,
+        client_site_id=pv_system.pv_system_id,
     )
 
     # format dataframe
     pv_yield_df["site_uuid"] = site.site_uuid
     pv_yield_df["power_kw"] = pv_yield_df["solar_generation_kw"]
-    pv_yield_df["start_datetime_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
+    pv_yield_df["end_utc"] = pv_yield_df["datetime_utc"]
+    # TODO this is hard coded for Sheffield Solar Passiv
+    pv_yield_df["start_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
 
     # save to database
+    logger.debug(f'Inserting {len(pv_yield_df)} records to pv site database')
     insert_generation_values(session, pv_yield_df)
