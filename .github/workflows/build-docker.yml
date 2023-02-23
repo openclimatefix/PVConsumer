@@ -1,0 +1,12 @@
+name: Bump version and auto-release (docker)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  call-run-docker-release:
+    uses: openclimatefix/.github/.github/workflows/build-docker.yml@main
+    with:
+      image_base_name: PVConsumer
+      docker_file: infrastructure/Dockerfile
