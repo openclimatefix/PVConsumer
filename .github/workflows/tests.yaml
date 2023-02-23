@@ -28,6 +28,12 @@ jobs:
       - name: Run the tests
         # Using --maxfail 1 because the tests are quite slow.
         run: poetry run pytest tests --cov=./pvconsumer --cov-report=xml
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          SYSTEM_ID: ${{ secrets.SYSTEM_ID }}
+          SS_KEY: ${{ secrets.API_KEY }}
+          SS_URL: ${{ secrets.SYSTEM_ID }}
+          SS_USER_ID: ${{ secrets.SYSTEM_ID }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
