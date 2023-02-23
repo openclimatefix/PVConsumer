@@ -18,14 +18,14 @@ COPY pyproject.toml app/pyproject.toml
 COPY README.md app/README.md
 COPY poetry.lock app/poetry.lock
 
-# Install python requirements.
-RUN poetry install --witout dev --no-cache
-
 # copy library files
 COPY pvconsumer/ app/pvconsumer/
 
 # change to app folder
 WORKDIR /app
+
+# Install python requirements.
+RUN poetry install --witout dev --no-cache
 
 # install library
 RUN pip install -e .
