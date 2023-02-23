@@ -110,10 +110,3 @@ def test_filter_pv_systems_which_have_new_data(db_session):
     assert len(pv_systems_keep) == 2
     assert pv_systems_keep[0].id == 1
     assert pv_systems_keep[1].id == 2
-
-
-@pytest.mark.liveapi
-def test_get_pv_systems(db_session, filename):
-    pv_systems = get_pv_systems(session=db_session, filename=filename, provider="pvoutput.org")
-
-    assert len(pv_systems)

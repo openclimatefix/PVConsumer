@@ -6,7 +6,6 @@ from pvsite_datamodel.sqlmodels import GenerationSQL
 from pvconsumer.app import app, pull_data_and_save
 
 
-@pytest.mark.liveapi
 def test_pull_data(db_session, sites):
     pv_systems = [
         PVSystem(pv_system_id=10020, provider="pvoutput.org").to_orm(),
@@ -19,7 +18,6 @@ def test_pull_data(db_session, sites):
     assert len(pv_yields) > 0
 
 
-@pytest.mark.liveapi
 def test_pull_data_solar_sheffield(db_session, sites):
     pv_systems = [
         PVSystem(pv_system_id=4383, provider="solar_sheffield_passiv").to_orm(),
@@ -32,7 +30,6 @@ def test_pull_data_solar_sheffield(db_session, sites):
     assert len(pv_yields) > 0
 
 
-@pytest.mark.liveapi
 def test_app(db_connection, db_connection_forecast, filename, sites):
     runner = CliRunner()
     response = runner.invoke(
@@ -59,7 +56,6 @@ def test_app(db_connection, db_connection_forecast, filename, sites):
         # There is a chance this will fail in the early morning when no data is available
 
 
-@pytest.mark.liveapi
 def test_app_ss(db_connection, db_connection_forecast, filename_solar_sheffield, sites):
     runner = CliRunner()
     response = runner.invoke(
