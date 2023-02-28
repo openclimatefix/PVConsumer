@@ -2586,14 +2586,14 @@ urllib3 = "*"
 
 [[package]]
 name = "pvsite-datamodel"
-version = "0.1.26"
+version = "0.1.29"
 description = "SDK for interacting with the PVSite database"
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "pvsite_datamodel-0.1.26-py3-none-any.whl", hash = "sha256:c0c5623295bd47abd1a2178d50f159991228253988666f2fe9bba325ec793641"},
-    {file = "pvsite_datamodel-0.1.26.tar.gz", hash = "sha256:a8f2e2262ee1316ab9b6862ddd6040dbc6bc4ab95214b0f0d99792c6f539081b"},
+    {file = "pvsite_datamodel-0.1.29-py3-none-any.whl", hash = "sha256:d09be171beb59919fed45d5593aadee5ad32ef8abc0a2707923b59c1c7090ac0"},
+    {file = "pvsite_datamodel-0.1.29.tar.gz", hash = "sha256:df4dc7520e054d70858e5127b4244304972626655b5ff49d9173e4999cd1e21e"},
 ]
 
 [package.dependencies]
@@ -3751,4 +3751,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "829255ab798b02ec25fb2c9a416b6593bebf907f2f9fb7e38ef5c65939fc0e68"
+content-hash = "1e4b7e41a0db7b6869f7553ec6a169471c6ef6de26faad12b373a44571b3095f"
