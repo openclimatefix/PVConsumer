@@ -6,8 +6,8 @@ on:
     - cron: "0 12 * * 1"
 
 jobs:
-  run_the_tests:
-    name: Run the tests
+  run_the_tests_and_lint:
+    name: Run the tests and lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -24,6 +24,9 @@ jobs:
 
       - name: Install python dependencies
         run: poetry install
+
+      - name: Run lint
+        run: make lint
 
       - name: Run the tests
         run: poetry run pytest tests --cov=./pvconsumer --cov-report=xml

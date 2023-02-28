@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta, timezone
 
-import pytest
-
 from pvconsumer.solar_sheffield_passiv import (
     get_all_latest_pv_yield_from_solar_sheffield,
     get_all_systems_from_solar_sheffield,

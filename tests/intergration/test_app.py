@@ -1,4 +1,3 @@
-import pytest
 from click.testing import CliRunner
 from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, PVYieldSQL
 from pvsite_datamodel.sqlmodels import GenerationSQL

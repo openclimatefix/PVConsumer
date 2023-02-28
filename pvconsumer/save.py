@@ -56,5 +56,5 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     pv_yield_df["start_utc"] = pv_yield_df["datetime_utc"] - pd.Timedelta("5T")
 
     # save to database
-    logger.debug(f'Inserting {len(pv_yield_df)} records to pv site database')
+    logger.debug(f"Inserting {len(pv_yield_df)} records to pv site database")
     insert_generation_values(session, pv_yield_df)

@@ -78,7 +78,13 @@ The app has the following high-level strucuture
 Format the python codebase **in place**.
 
 ```bash
-./format.sh
+make format
+```
+
+Test that the codebase is formatted
+
+```bash
+make lint
 ```
 
 
