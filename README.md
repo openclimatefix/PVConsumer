@@ -84,13 +84,13 @@ Format the python codebase **in place**.
 
 ## 🩺 Testing
 
-Run only the tests that don't call any live API.
+Run only the unit tests
 
 ```bash
-poetry run pytest tests -m "not liveapi"
+poetry run pytest tests/unittest
 ```
 
-Run all the tests (the tests marked `liveapi` require the environment variables to be set, see next section).
+Run all the tests (including the "integration" tests that require credentials to call an external API)
 
 ```bash
 poetry run pytest tests

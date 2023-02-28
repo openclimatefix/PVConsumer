@@ -28,11 +28,6 @@ ruff = "^0.0.252"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.pytest.ini_options]
-markers = [
-    "liveapi: Call some API, implying that they need credentials to be set up"
-]
-
 [tool.isort]
 profile = "black"
 line_length = 100
