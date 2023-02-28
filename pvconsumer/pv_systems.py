@@ -76,10 +76,8 @@ def find_missing_pv_systems(
     )
 
     missing = df_all["_merge"] == "left_only"
-    pv_systems_missing = df_all[missing]
+    pv_systems_missing = df_all[missing].copy()
     pv_systems_missing["provider"] = provider
-
-    # add log debug
 
     return df_to_list_pv_system(pv_systems_missing)
 
