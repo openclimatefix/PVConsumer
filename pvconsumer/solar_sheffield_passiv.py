@@ -79,7 +79,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     """
 
     logger.debug("Getting all pv yields")
-    full_url = f"{url}reading_passiv_integrated_5mins?user_id={user_id}&key={key}"
+    full_url = f"{url}/reading_passiv_integrated_5mins?user_id={user_id}&key={key}"
     response = requests.get(full_url)
     assert response.status_code == 200
 
@@ -89,7 +89,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
 
     logger.debug("Getting all pv systems")
     # could get this from the database instead, but its so very quick here
-    full_url = f"{url}view_owner_system_params_rounded?user_id={user_id}&key={key}"
+    full_url = f"{url}/view_owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
     assert response.status_code == 200
 
