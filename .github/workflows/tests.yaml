@@ -19,7 +19,7 @@ jobs:
       - name: Install python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
           cache: poetry
 
       - name: Install python dependencies
@@ -37,7 +37,6 @@ jobs:
           SS_KEY: ${{ secrets.SS_KEY }}
           SS_URL: ${{ secrets.SS_URL }}
           SS_USER_ID: ${{ secrets.SYSTEMSS_USER_ID_ID }}
-
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
