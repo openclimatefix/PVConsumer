@@ -12,5 +12,4 @@ To run the intergration tests you will need to set the following variables
  - SYSTEM_ID: system id for pvoutput.org
  - DATA_SERVICE_URL: the URL for the pvoutput.org data service
 
-TODO we should mock some of the APIs to and then more unittests can be run with out the real connection details. 
-
+TODO we should mock some of the APIs to and then more unittests can be run with out the real connection details.
