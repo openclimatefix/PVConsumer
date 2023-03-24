@@ -10,8 +10,6 @@ Get the pv installed capacoty values and add them to the database
 import json
 
 import boto3
-import fsspec
-import pandas as pd
 import xarray
 import xarray as xr
 from nowcasting_datamodel.connection import DatabaseConnection
