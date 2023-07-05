@@ -6,10 +6,11 @@ on:
 
 jobs:
   bump-version-docker-release:
-    uses: openclimatefix/.github/.github/workflows/docker-release.yml@reusable-workflows-2
+    uses: openclimatefix/.github/.github/workflows/docker-release.yml@v1.7.2
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
     with:
       image_base_name: pvconsumer
       docker_file: infrastructure/docker/Dockerfile
