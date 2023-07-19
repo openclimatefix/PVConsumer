@@ -40,7 +40,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     """
     logger.debug("Getting all pv systems")
 
-    full_url = f"{url}view_owner_system_params_rounded?user_id={user_id}&key={key}"
+    full_url = f"{url}owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
     assert response.status_code == 200
 
@@ -53,6 +53,14 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
 
     data_df["provider"] = "solar_sheffield_passiv"
     data_df["pv_system_id"] = data_df["pv_system_id"].astype(int)
+
+
+    # format
+    none_index = data_df["latitude"] == "None"
+    logger.debug(f'Found {sum(none_index)} None values in latitude, going to drop')
+    data_df = data_df[~none_index]
+    data_df["latitude"] = data_df["latitude"].astype(float)
+    data_df["longitude"] = data_df["longitude"].astype(float)
 
     # change any none strings to Nan, in orientation
     none_index = data_df["orientation"] == "None"
@@ -79,7 +87,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     """
 
     logger.debug("Getting all pv yields")
-    full_url = f"{url}reading_passiv_integrated_5mins?user_id={user_id}&key={key}"
+    full_url = f"{url}reading_integrated_5mins?user_id={user_id}&key={key}"
     response = requests.get(full_url)
     assert response.status_code == 200
 
@@ -89,7 +97,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
 
     logger.debug("Getting all pv systems")
     # could get this from the database instead, but its so very quick here
-    full_url = f"{url}view_owner_system_params_rounded?user_id={user_id}&key={key}"
+    full_url = f"{url}owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
     assert response.status_code == 200
 
