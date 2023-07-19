@@ -36,7 +36,7 @@ jobs:
           DATA_SERVICE_URL: https://pvoutput.org/
           SS_KEY: ${{ secrets.SS_KEY }}
           SS_URL: ${{ secrets.SS_URL }}
-          SS_USER_ID: ${{ secrets.SYSTEMSS_USER_ID_ID }}
+          SS_USER_ID: ${{ secrets.SS_USER_ID }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
