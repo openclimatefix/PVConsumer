@@ -54,10 +54,9 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     data_df["provider"] = "solar_sheffield_passiv"
     data_df["pv_system_id"] = data_df["pv_system_id"].astype(int)
 
-
     # format
     none_index = data_df["latitude"] == "None"
-    logger.debug(f'Found {sum(none_index)} None values in latitude, going to drop')
+    logger.debug(f"Found {sum(none_index)} None values in latitude, going to drop")
     data_df = data_df[~none_index]
     data_df["latitude"] = data_df["latitude"].astype(float)
     data_df["longitude"] = data_df["longitude"].astype(float)
