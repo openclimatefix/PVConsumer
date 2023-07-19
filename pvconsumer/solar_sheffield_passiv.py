@@ -42,7 +42,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
 
     full_url = f"{url}owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
-    assert response.status_code == 200, f'Cant get data from {url}owner_system_params_rounded'
+    assert response.status_code == 200, f"Cant get data from {url}owner_system_params_rounded"
 
     data_df = raw_to_dataframe(response=response)
 
@@ -88,7 +88,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     logger.debug("Getting all pv yields")
     full_url = f"{url}reading_integrated_5mins?user_id={user_id}&key={key}"
     response = requests.get(full_url)
-    assert response.status_code == 200, f'Cant get data from {url}reading_integrated_5mins'
+    assert response.status_code == 200, f"Cant get data from {url}reading_integrated_5mins"
 
     pv_yield_df = raw_to_dataframe(response=response)
     pv_yield_df["timestamp"] = pd.to_datetime(pv_yield_df["timestamp"])
@@ -98,7 +98,7 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
     # could get this from the database instead, but its so very quick here
     full_url = f"{url}owner_system_params_rounded?user_id={user_id}&key={key}"
     response = requests.get(full_url)
-    assert response.status_code == 200, f'Cant get data from {url}owner_system_params_rounded'
+    assert response.status_code == 200, f"Cant get data from {url}owner_system_params_rounded"
 
     pv_system_df = raw_to_dataframe(response=response)
 
