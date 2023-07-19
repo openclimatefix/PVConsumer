@@ -9,14 +9,14 @@ pip install h5netcdf
 
 """
 
-filename_metadata = "gs://solar-pv-nowcasting-data/PV/PVOutput.org/UK_PV_metadata.csv"
-filename = "gs://solar-pv-nowcasting-data/PV/PVOutput.org/UK_PV_timeseries_batch.nc"
-
 import io
 
 import fsspec
 import pandas as pd
 import xarray as xr
+
+filename_metadata = "gs://solar-pv-nowcasting-data/PV/PVOutput.org/UK_PV_metadata.csv"
+filename = "gs://solar-pv-nowcasting-data/PV/PVOutput.org/UK_PV_timeseries_batch.nc"
 
 # dont need this, but nice to look sometimes
 metedata = pd.read_csv(filename_metadata)
