@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from nowcasting_datamodel.connection import DatabaseConnection
 from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
-from pvsite_datamodel.sqlmodels import Base, ClientSQL, GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import Base, GenerationSQL, SiteSQL
 from testcontainers.postgres import PostgresContainer
 
 import pvconsumer
@@ -85,25 +85,20 @@ def sites(db_session, filename, filename_solar_sheffield):
 
     db_session.query(GenerationSQL).delete()
     db_session.query(SiteSQL).delete()
-    db_session.query(ClientSQL).delete()
 
     sites = []
     sites_df = pd.read_csv(filename_solar_sheffield, index_col=0)
     client_site_ids = sites_df["pv_system_id"].values
     for i in range(0, len(client_site_ids)):
-        client = ClientSQL(
-            client_uuid=uuid.uuid4(),
-            client_name="solar_sheffield_passiv",
-        )
+
         site = SiteSQL(
-            client_uuid=client.client_uuid,
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
             ml_id=i,
         )
-        db_session.add(client)
+
         db_session.add(site)
         db_session.commit()
 
@@ -112,19 +107,14 @@ def sites(db_session, filename, filename_solar_sheffield):
     sites_df = pd.read_csv(filename, index_col=0)
     client_site_ids = sites_df.index
     for i in range(0, len(client_site_ids)):
-        client = ClientSQL(
-            client_uuid=uuid.uuid4(),
-            client_name="pvoutput.org",
-        )
+
         site = SiteSQL(
-            client_uuid=client.client_uuid,
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
             ml_id=i + 100,
         )
-        db_session.add(client)
         db_session.add(site)
         db_session.commit()
 
