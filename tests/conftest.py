@@ -1,6 +1,5 @@
 import contextlib
 import os
-import uuid
 
 import pandas as pd
 import pytest
