@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 # make sure it doesnt fail if the docker file doesnt know the git commit
 ARG GIT_PYTHON_REFRESH=quiet
