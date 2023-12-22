@@ -3,10 +3,10 @@ import os
 
 import pandas as pd
 import pytest
+from pvsite_datamodel.connection import DatabaseConnection
 
 # from nowcasting_datamodel.connection import DatabaseConnection
 from pvsite_datamodel.sqlmodels import Base, GenerationSQL, SiteSQL
-from pvsite_datamodel.connection import DatabaseConnection
 from testcontainers.postgres import PostgresContainer
 
 import pvconsumer

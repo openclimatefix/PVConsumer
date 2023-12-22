@@ -1,10 +1,10 @@
 from click.testing import CliRunner
-from pvconsumer.app import app, pull_data_and_save
 from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+
+from pvconsumer.app import app, pull_data_and_save
 
 
 def test_pull_data(db_session, sites):
-
     pull_data_and_save(pv_systems=sites, session=db_session, provider="pvoutput.org")
 
     pv_yields = db_session.query(GenerationSQL).all()
@@ -12,7 +12,6 @@ def test_pull_data(db_session, sites):
 
 
 def test_pull_data_solar_sheffield(db_session, sites):
-
     pull_data_and_save(pv_systems=sites, session=db_session, provider="solar_sheffield_passiv")
 
     pv_yields = db_session.query(GenerationSQL).all()

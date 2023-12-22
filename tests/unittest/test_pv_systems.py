@@ -2,13 +2,14 @@ import uuid
 from datetime import datetime
 
 import pandas as pd
+from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+
 from pvconsumer.pv_systems import (
     filter_pv_systems_which_have_new_data,
     find_missing_pv_systems,
     load_pv_systems,
 )
 from pvconsumer.utils import solar_sheffield_passiv
-from pvsite_datamodel.sqlmodels import SiteSQL, GenerationSQL
 
 
 def test_load_pv_systems():

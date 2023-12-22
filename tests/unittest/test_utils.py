@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
 
 import pandas as pd
-from pvconsumer.utils import format_pv_data
 from pvsite_datamodel.sqlmodels import GenerationSQL
+
+from pvconsumer.utils import format_pv_data
 
 
 def test_pv_yield_df_no_data(db_session, sites):
-
     pv_yield_df = pd.DataFrame(columns=["instantaneous_power_gen_W", "datetime"])
 
     pv_yields = format_pv_data(pv_system=sites[0], pv_yield_df=pv_yield_df, session=db_session)
@@ -14,7 +14,6 @@ def test_pv_yield_df_no_data(db_session, sites):
 
 
 def test_pv_yield_df(sites, db_session):
-
     pv_yield_df = pd.DataFrame(
         columns=["instantaneous_power_gen_W", "datetime"], data=[[1, datetime(2022, 1, 1)]]
     )
@@ -66,7 +65,6 @@ def test_pv_yield_df_0_bug(sites, db_session):
 
 
 def test_pv_yield_df_zeros(sites, db_session):
-
     pv_yield_df = pd.DataFrame(
         columns=["instantaneous_power_gen_W", "datetime"],
         data=[

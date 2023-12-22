@@ -129,7 +129,6 @@ def pull_data_and_save(
 
     all_pv_yields_df = []
     for pv_system_chunk in pv_system_chunks:
-
         if provider == "pvoutput.org":
             # set up pv output.org
             pv_output = PVOutput()
@@ -176,7 +175,6 @@ def pull_data_and_save(
             if len(pv_yield_df) == 0:
                 logger.warning(f"Did not find any data for {pv_system.client_site_id} for {date}")
             else:
-
                 # filter out which is in our database and a funny 0 bug
                 pv_yield_df = format_pv_data(
                     pv_system=pv_system, pv_yield_df=pv_yield_df, session=session
