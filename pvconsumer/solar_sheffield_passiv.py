@@ -44,7 +44,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> pd.
     data_df = raw_to_dataframe(response=response)
 
     data_df.rename(columns={"system_id": "pv_system_id"}, inplace=True)
-    data_df.rename(columns={"kWp": "installed_capacity_kw"}, inplace=True)
+    data_df.rename(columns={"kWp": "capacity_kw"}, inplace=True)
     data_df.rename(columns={"longitude_rounded": "longitude"}, inplace=True)
     data_df.rename(columns={"latitude_rounded": "latitude"}, inplace=True)
 

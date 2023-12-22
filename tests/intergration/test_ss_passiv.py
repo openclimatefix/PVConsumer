@@ -1,9 +1,25 @@
 from datetime import datetime, timedelta, timezone
 
+import pytest
+from pvconsumer.pv_systems import get_pv_systems
 from pvconsumer.solar_sheffield_passiv import (
     get_all_latest_pv_yield_from_solar_sheffield,
     get_all_systems_from_solar_sheffield,
 )
+from pvconsumer.utils import solar_sheffield_passiv
+
+
+def test_get_pv_systems_ss(db_session, filename):
+    pv_systems = get_pv_systems(
+        session=db_session, filename=filename, provider=solar_sheffield_passiv
+    )
+
+    assert len(pv_systems) > 0
+
+
+def test_test_get_pv_systems_error(db_session, filename):
+    with pytest.raises(Exception):
+        _ = get_pv_systems(session=db_session, filename=filename, provider="fake")
 
 
 def test_get_all_systems():

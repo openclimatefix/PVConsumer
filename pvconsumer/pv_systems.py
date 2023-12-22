@@ -5,15 +5,14 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 import pandas as pd
+import pvconsumer
+from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
+from pvconsumer.utils import pv_output, solar_sheffield_passiv
 from pvoutput import PVOutput
 from pvsite_datamodel.read import get_all_sites
 from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-
-import pvconsumer
-from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
-from pvconsumer.utils import pv_output, solar_sheffield_passiv
 
 # from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 
@@ -146,7 +145,7 @@ def get_pv_systems(
                 pv_system.status_interval_minutes = int(metadata.status_interval_minutes)
 
             elif provider == solar_sheffield_passiv:
-                pv_system = [s for s in pv_systems if s.pv_system_id == pv_system.pv_system_id][0]
+                pv_system = pv_systems[pv_systems["pv_system_id"] == pv_system.pv_system_id].iloc[0]
             else:
                 raise Exception(f"Can not use provider {provider}")
 
@@ -156,8 +155,8 @@ def get_pv_systems(
                 max_ml_id = 0
 
             site = SiteSQL(
-                client_site_id=pv_system.pv_system_id,
-                client_site_name=f"{provider}_pv_system.pv_system_name",
+                client_site_id=str(pv_system.pv_system_id),
+                client_site_name=f"{provider}_{pv_system.pv_system_id}",
                 latitude=pv_system.latitude,
                 longitude=pv_system.longitude,
                 capacity_kw=pv_system.capacity_kw,
