@@ -5,16 +5,15 @@ from datetime import datetime, timedelta
 from typing import List, Optional
 
 import pandas as pd
-from pvconsumer.utils import pv_output, solar_sheffield_passiv
 from pvoutput import PVOutput
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-
-from pvsite_datamodel.sqlmodels import SiteSQL, GenerationSQL
 from pvsite_datamodel.read import get_all_sites
+from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
+from pvconsumer.utils import pv_output, solar_sheffield_passiv
 
 # from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 

@@ -13,15 +13,16 @@ from typing import List, Optional, Tuple
 
 import click
 import pandas as pd
+from pvoutput import PVOutput
+from pvsite_datamodel.connection import DatabaseConnection
+from pvsite_datamodel.sqlmodels import SiteSQL
+from sqlalchemy.orm import Session
+
 import pvconsumer
 from pvconsumer.pv_systems import filter_pv_systems_which_have_new_data, get_pv_systems
 from pvconsumer.save import save_to_pv_site_database
 from pvconsumer.solar_sheffield_passiv import get_all_latest_pv_yield_from_solar_sheffield
 from pvconsumer.utils import format_pv_data
-from pvoutput import PVOutput
-from pvsite_datamodel.connection import DatabaseConnection
-from pvsite_datamodel.sqlmodels import SiteSQL
-from sqlalchemy.orm import Session
 
 logging.basicConfig(
     level=getattr(logging, os.getenv("LOGLEVEL", "INFO")),

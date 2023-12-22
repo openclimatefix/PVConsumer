@@ -3,9 +3,8 @@ import logging
 from datetime import timezone
 
 import pandas as pd
+from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
 from sqlalchemy.orm import Session
-
-from pvsite_datamodel.sqlmodels import SiteSQL, GenerationSQL
 
 #
 logger = logging.getLogger(__name__)
