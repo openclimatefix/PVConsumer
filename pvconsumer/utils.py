@@ -1,49 +1,22 @@
-""" Utils functions """
+# """ Utils functions """
 import logging
 from datetime import timezone
-from typing import List
 
 import pandas as pd
-from nowcasting_datamodel.models import PVSystem, PVSystemSQL, PVYield, PVYieldSQL
 from sqlalchemy.orm import Session
 
+from pvsite_datamodel.sqlmodels import SiteSQL, GenerationSQL
+
+#
 logger = logging.getLogger(__name__)
 
 
-def list_pv_system_to_df(pv_systems: List[PVSystem]) -> pd.DataFrame:
-    """
-    Change list of pv systems to dataframe
-
-    Args:
-        pv_systems: list of pv systems (pdyantic objects)
-
-    Returns: dataframe with columns the same as the pv systems pydantic object
-
-    """
-    return pd.DataFrame([pv_system.dict() for pv_system in pv_systems])
-
-
-def df_to_list_pv_system(pv_systems_df=pd.DataFrame) -> List[PVSystem]:
-    """
-    Change dataframe to lsit of pv systems
-
-    Args:
-        pv_systems_df: dataframe with columns the same as the pv systems pydantic object
-
-    Returns: list of pv systems
-
-    """
-    return [PVSystem(**row) for row in pv_systems_df.to_dict(orient="records")]
-
-
-def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PVYieldSQL]:
+def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Session) -> pd.DataFrame:
     """
     Format the pv data
 
     1. get rid of 0 bug
     2. remove data if already in our database
-    3. format in to PVYield objects
-    4. convert to SQL objects
 
     :param pv_system: the pv system this data is about
     :param pv_yield_df: the pv yield data with columns 'instantaneous_power_gen_W' and 'datetime'
@@ -73,14 +46,22 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
         ):
             logger.debug(
                 f"Dropping last row of pv data for "
-                f"{pv_system.pv_system_id} "
+                f"{pv_system.client_site_id} "
                 f"as last row is 0, but the second to last row is not."
             )
             pv_yield_df.drop(pv_yield_df.tail(1).index, inplace=True)
 
     # 2. filter by last
-    if pv_system.last_pv_yield is not None:
-        last_pv_yield_datetime = pv_system.last_pv_yield.datetime_utc.replace(tzinfo=timezone.utc)
+    last_pv_generation = (
+        session.query(GenerationSQL)
+        .join(SiteSQL)
+        .filter(SiteSQL.site_uuid == pv_system.site_uuid)
+        .order_by(GenerationSQL.created_utc.desc())
+        .first()
+    )
+
+    if last_pv_generation is not None:
+        last_pv_yield_datetime = last_pv_generation.start_utc.replace(tzinfo=timezone.utc)
 
         pv_yield_df = pv_yield_df[pv_yield_df["datetime_utc"] > last_pv_yield_datetime]
 
@@ -92,22 +73,10 @@ def format_pv_data(pv_system: PVSystemSQL, pv_yield_df: pd.DataFrame) -> List[PV
             logger.debug(pv_yield_df)
     else:
         logger.debug(
-            f"This is the first lot pv yield data for " f"pv system {(pv_system.pv_system_id)}"
+            f"This is the first lot pv yield data for pv system {(pv_system.client_site_id)}"
         )
 
-    # 3. format in to PVYield objects
-    # need columns datetime_utc, solar_generation_kw
-    pv_yield_df = pv_yield_df[["solar_generation_kw", "datetime_utc"]]
-
-    # change to list of pydantic objects
-    pv_yields = [PVYield(**row) for row in pv_yield_df.to_dict(orient="records")]
-    # 4. change to sqlalamcy objects and add pv systems
-    pv_yields_sql = [pv_yield.to_orm() for pv_yield in pv_yields]
-    for pv_yield_sql in pv_yields_sql:
-        pv_yield_sql.pv_system = pv_system
-    logger.debug(f"Found {len(pv_yields_sql)} pv yield for pv systems {pv_system.pv_system_id}")
-
-    return pv_yields_sql
+    return pv_yield_df
 
 
 class FakeDatabaseConnection:
@@ -137,3 +106,7 @@ class FakeDatabaseConnection:
     def get_session(self) -> Session:
         """Get sqlalamcy session"""
         return self.Session()
+
+
+pv_output = "pvoutput.org"
+solar_sheffield_passiv = "solar_sheffield_passiv"

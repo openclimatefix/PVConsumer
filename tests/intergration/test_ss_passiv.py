@@ -12,7 +12,7 @@ def test_get_all_systems():
     # these numbers seem to change over time
     assert len(pv_systems) >= 56824
     assert len(pv_systems) <= 57200
-    assert pv_systems[0].installed_capacity_kw is not None
+    assert pv_systems.iloc[0].installed_capacity_kw is not None
 
 
 def test_get_all_systems_filter():
