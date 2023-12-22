@@ -1,12 +1,7 @@
 """ Save to database functions"""
 import logging
-from typing import List
 
 import pandas as pd
-
-# from nowcasting_datamodel.models import PVSystem, PVYield
-from pvsite_datamodel.read.site import get_site_by_client_site_id
-from pvsite_datamodel.sqlmodels import SiteSQL
 from pvsite_datamodel.write.generation import insert_generation_values
 from sqlalchemy.orm import Session
 
