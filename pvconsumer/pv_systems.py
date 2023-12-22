@@ -193,6 +193,7 @@ def filter_pv_systems_which_have_new_data(
     Args:
         pv_systems: list of pv systems
         datetime_utc: the datetime now
+        session: database session
 
     Returns: list of pv systems that have new data.
 
