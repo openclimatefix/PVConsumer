@@ -78,34 +78,5 @@ def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Sessi
     return pv_yield_df
 
 
-class FakeDatabaseConnection:
-    """Fake Database connection class"""
-
-    def __init__(self):
-        """
-        Set up fake database connection
-
-        This is so we can still do
-        'with connection.get_session() as sessions:'
-        bu session is None
-        """
-
-        class FakeSession:
-            def __init__(self):  # noqa
-                pass
-
-            def __enter__(self):  # noqa
-                return None
-
-            def __exit__(self, type, value, traceback):  # noqa
-                pass
-
-        self.Session = FakeSession
-
-    def get_session(self) -> Session:
-        """Get sqlalamcy session"""
-        return self.Session()
-
-
 pv_output = "pvoutput.org"
 solar_sheffield_passiv = "solar_sheffield_passiv"
