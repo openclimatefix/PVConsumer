@@ -37,7 +37,6 @@ m = pv_df.max()
 # get pv systems from database and update
 connection = DatabaseConnection(url=db_url, base=Base_PV, echo=True)
 with connection.get_session() as session:
-
     pv_systems = session.query(PVSystemSQL).all()
 
     for pv_system in pv_systems:
