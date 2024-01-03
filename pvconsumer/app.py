@@ -54,7 +54,7 @@ logger = logging.getLogger(__name__)
     type=click.STRING,
 )
 def app(
-    db_url: Optional[str] = None,
+    db_url: str,
     filename: Optional[str] = None,
     provider: str = "pvoutput.org",
 ):
