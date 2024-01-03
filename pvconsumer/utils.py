@@ -1,6 +1,6 @@
 """ Utils functions """
 import logging
-from datetime import timezone
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
@@ -51,10 +51,17 @@ def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Sessi
             pv_yield_df.drop(pv_yield_df.tail(1).index, inplace=True)
 
     # 2. filter by last
+    if len(pv_yield_df) > 0:
+        start_utc_filter = pv_yield_df["datetime_utc"].min() - timedelta(days=1)
+    else:
+        start_utc_filter = datetime.now() - timedelta(days=1)
+
     last_pv_generation = (
         session.query(GenerationSQL)
+        .filter(GenerationSQL.site_uuid == pv_system.site_uuid)
         .join(SiteSQL)
         .filter(SiteSQL.site_uuid == pv_system.site_uuid)
+        .filter(GenerationSQL.start_utc > start_utc_filter)
         .order_by(GenerationSQL.created_utc.desc())
         .first()
     )

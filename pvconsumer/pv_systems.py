@@ -144,6 +144,7 @@ def get_pv_systems(
                 pv_system.latitude = metadata.latitude
                 pv_system.longitude = metadata.longitude
                 pv_system.status_interval_minutes = int(metadata.status_interval_minutes)
+                pv_system.capacity_kw = metadata.system_DC_capacity_W / 1000
 
             elif provider == solar_sheffield_passiv:
                 pv_system = pv_systems[pv_systems["pv_system_id"] == pv_system.pv_system_id].iloc[0]
@@ -214,11 +215,12 @@ def filter_pv_systems_which_have_new_data(
         session.query(SiteSQL.site_uuid, GenerationSQL.start_utc)
         .distinct(
             GenerationSQL.site_uuid,
-            GenerationSQL.start_utc,
+            # GenerationSQL.start_utc,
         )
         .join(SiteSQL)
         .filter(
             GenerationSQL.start_utc <= datetime_utc,
+            GenerationSQL.start_utc >= datetime_utc - timedelta(days=1),
             GenerationSQL.site_uuid.in_(site_uuids),
         )
         .order_by(

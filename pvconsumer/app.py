@@ -128,6 +128,7 @@ def pull_data_and_save(
     pv_system_chunks = chunks(original_list=pv_systems, n=n_pv_systems_per_batch)
 
     all_pv_yields_df = []
+    i = 0
     for pv_system_chunk in pv_system_chunks:
         if provider == "pvoutput.org":
             # set up pv output.org
@@ -155,7 +156,8 @@ def pull_data_and_save(
         else:
             raise Exception(f"Can not use provider {provider}")
 
-        for i, pv_system in enumerate(pv_system_chunk):
+        for _, pv_system in enumerate(pv_system_chunk):
+            i = i + 1
             logger.debug(
                 f"Processing {i}th pv system ({pv_system.client_site_id=}), "
                 f"out of {len(pv_systems)}"
