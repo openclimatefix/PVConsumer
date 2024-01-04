@@ -6,7 +6,7 @@
 
 [![codecov](https://codecov.io/gh/openclimatefix/PVConsumer/branch/main/graph/badge.svg?token=R0VM4YBUJS)](https://codecov.io/gh/openclimatefix/PVConsumer)
 
-Consumer PV data from pvoutput.org. The idea is to expand to different data sources in the future.
+Consumer PV data from `pvoutput.org` and `SheffieldSolar`. The idea is to expand to different data sources in the future.
 
 
 # Live
