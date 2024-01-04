@@ -1,24 +1,26 @@
 """ PV system functions """
 import logging
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from typing import List, Optional
 
 import pandas as pd
-from nowcasting_datamodel.models.pv import PVSystem, PVSystemSQL, pv_output, solar_sheffield_passiv
-from nowcasting_datamodel.read.read_pv import get_latest_pv_yield
-from nowcasting_datamodel.read.read_pv import get_pv_systems as get_pv_systems_from_db
 from pvoutput import PVOutput
+from pvsite_datamodel.read import get_all_sites
+from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 import pvconsumer
 from pvconsumer.solar_sheffield_passiv import get_all_systems_from_solar_sheffield
-from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
+from pvconsumer.utils import pv_output, solar_sheffield_passiv
+
+# from pvconsumer.utils import df_to_list_pv_system, list_pv_system_to_df
 
 logger = logging.getLogger(__name__)
 
 
-def load_pv_systems(provider: str = pv_output, filename: Optional[str] = None) -> List[PVSystem]:
+def load_pv_systems(provider: str = pv_output, filename: Optional[str] = None) -> pd.DataFrame:
     """
     Load pv systems from file
 
@@ -36,25 +38,23 @@ def load_pv_systems(provider: str = pv_output, filename: Optional[str] = None) -
 
     logger.debug(f"Loading local pv systems from {filename}")
 
-    pv_capacity = pd.read_csv(filename)
+    pv_systems_df = pd.read_csv(filename, index_col=0)
 
-    pv_systems = df_to_list_pv_system(pv_systems_df=pv_capacity)
-
-    return pv_systems
+    return pv_systems_df
 
 
 def find_missing_pv_systems(
-    pv_systems_local: List[PVSystem],
-    pv_systems_db: List[PVSystem],
+    pv_systems_local: pd.DataFrame,
+    pv_systems_db: pd.DataFrame,
     provider: str,
-) -> List[PVSystem]:
+) -> pd.DataFrame:
     """
     Find missing pv systems
 
     Gte the pv systems that are in local file, but not in the database
     Args:
-        pv_systems_local: list of pv systems stored locally
-        pv_systems_db: list of pv systems from the database
+        pv_systems_local: dataframe with "pv_system_id" from local file
+        pv_systems_db: dataframe with "pv_system_id" from local db
 
     Returns: list of pv systems that are not in the database
 
@@ -65,9 +65,11 @@ def find_missing_pv_systems(
     if len(pv_systems_db) == 0:
         return pv_systems_local
 
-    # change to dataframes
-    pv_systems_db = list_pv_system_to_df(pv_systems=pv_systems_db)[["pv_system_id"]]
-    pv_systems_local = list_pv_system_to_df(pv_systems=pv_systems_local)[["pv_system_id"]]
+    # get system ids
+    if "pv_system_id" not in pv_systems_db.columns:
+        pv_systems_db["pv_system_id"] = pv_systems_db["client_site_id"]
+    pv_systems_db = pv_systems_db[["pv_system_id"]]
+    pv_systems_local = pv_systems_local[["pv_system_id"]]
 
     # https://stackoverflow.com/questions/28901683/pandas-get-rows-which-are-not-in-other-dataframe
     # merge together
@@ -79,12 +81,12 @@ def find_missing_pv_systems(
     pv_systems_missing = df_all[missing].copy()
     pv_systems_missing["provider"] = provider
 
-    return df_to_list_pv_system(pv_systems_missing)
+    return pv_systems_missing
 
 
 def get_pv_systems(
     session: Session, provider: str, filename: Optional[str] = None
-) -> List[PVSystemSQL]:
+) -> List[SiteSQL]:
     """
     Get PV systems
 
@@ -99,19 +101,19 @@ def get_pv_systems(
     """
     # load all pv systems in database
 
-    pv_systems_sql_db: List[PVSystemSQL] = get_pv_systems_from_db(
-        provider=provider, session=session
-    )
+    pv_systems_sql_db: List[SiteSQL] = get_all_sites(session=session)
 
-    pv_systems_db = [PVSystem.from_orm(pv_system) for pv_system in pv_systems_sql_db]
+    # convert to sql objects to Pandas datafraome
+    pv_systems_db_df = pd.DataFrame([pv_system.__dict__ for pv_system in pv_systems_sql_db])
 
     # load master file
-    pv_system_local = load_pv_systems(filename=filename, provider=provider)
+    pv_system_local_df = load_pv_systems(filename=filename, provider=provider)
 
     # get missing pv systems
     missing_pv_system = find_missing_pv_systems(
-        pv_systems_local=pv_system_local, pv_systems_db=pv_systems_db, provider=provider
+        pv_systems_local=pv_system_local_df, pv_systems_db=pv_systems_db_df, provider=provider
     )
+    logger.debug(missing_pv_system)
 
     logger.debug(f"There are {len(missing_pv_system)} pv systems to add to the database")
 
@@ -123,7 +125,10 @@ def get_pv_systems(
             pv_systems = get_all_systems_from_solar_sheffield()
         else:
             raise Exception(f"Can not use provider {provider}")
-        for i, pv_system in enumerate(missing_pv_system):
+
+        logger.debug(missing_pv_system)
+        for i, pv_system in missing_pv_system.iterrows():
+            logger.debug(pv_system)
             # get metadata
             if provider == pv_output:
                 metadata = pv_output_data.get_metadata(
@@ -139,39 +144,42 @@ def get_pv_systems(
                 pv_system.latitude = metadata.latitude
                 pv_system.longitude = metadata.longitude
                 pv_system.status_interval_minutes = int(metadata.status_interval_minutes)
+                pv_system.capacity_kw = metadata.system_DC_capacity_W / 1000
 
             elif provider == solar_sheffield_passiv:
-                pv_system = [s for s in pv_systems if s.pv_system_id == pv_system.pv_system_id][0]
+                pv_system = pv_systems[pv_systems["pv_system_id"] == pv_system.pv_system_id].iloc[0]
             else:
                 raise Exception(f"Can not use provider {provider}")
 
-            # validate
-            _ = PVSystem.from_orm(pv_system)
+            # get the current max ml id, small chance this could lead to a raise condition
+            max_ml_id = session.query(func.max(SiteSQL.ml_id)).scalar()
+            if max_ml_id is None:
+                max_ml_id = 0
+
+            site = SiteSQL(
+                client_site_id=str(pv_system.pv_system_id),
+                client_site_name=f"{provider}_{pv_system.pv_system_id}",
+                latitude=pv_system.latitude,
+                longitude=pv_system.longitude,
+                capacity_kw=pv_system.capacity_kw,
+                ml_id=max_ml_id + 1,
+            )
 
             # add to database
             logger.debug(f"Adding pv system {pv_system.pv_system_id} to database")
-            session.add(pv_system.to_orm())
+            session.add(site)
 
             # The first time we do this, we might hit a rate limit of 900,
             # therefore its good to save this on the go
             session.commit()
 
-    pv_systems = get_pv_systems_from_db(provider=provider, session=session)
+    pv_systems_sql_db: List[SiteSQL] = get_all_sites(session=session)
 
-    yesterday = datetime.now(timezone.utc).date() - timedelta(days=1)
-    pv_systems = get_latest_pv_yield(
-        session=session,
-        append_to_pv_systems=True,
-        pv_systems=pv_systems,
-        start_datetime_utc=yesterday,
-        start_created_utc=yesterday,
-    )
-
-    return pv_systems
+    return pv_systems_sql_db
 
 
 def filter_pv_systems_which_have_new_data(
-    pv_systems: List[PVSystemSQL], datetime_utc: Optional[datetime] = None
+    session: Session, pv_systems: List[SiteSQL], datetime_utc: Optional[datetime] = None
 ):
     """
     Filter pv systems which have new data available
@@ -186,6 +194,7 @@ def filter_pv_systems_which_have_new_data(
     Args:
         pv_systems: list of pv systems
         datetime_utc: the datetime now
+        session: database session
 
     Returns: list of pv systems that have new data.
 
@@ -199,43 +208,62 @@ def filter_pv_systems_which_have_new_data(
     if datetime_utc is None:
         datetime_utc = datetime.utcnow()  # add timezone
 
+    site_uuids = [pv_system.site_uuid for pv_system in pv_systems]
+
+    # pull the latest data from the database
+    query = (
+        session.query(SiteSQL.site_uuid, GenerationSQL.start_utc)
+        .distinct(
+            GenerationSQL.site_uuid,
+            # GenerationSQL.start_utc,
+        )
+        .join(SiteSQL)
+        .filter(
+            GenerationSQL.start_utc <= datetime_utc,
+            GenerationSQL.start_utc >= datetime_utc - timedelta(days=1),
+            GenerationSQL.site_uuid.in_(site_uuids),
+        )
+        .order_by(
+            GenerationSQL.site_uuid,
+            GenerationSQL.start_utc,
+            GenerationSQL.created_utc.desc(),
+        )
+    )
+    last_generations = query.all()
+    last_generations = {row[0]: row[1] for row in last_generations}
+
     keep_pv_systems = []
     for i, pv_system in enumerate(pv_systems):
         logger.debug(f"Looking at {i}th pv system, out of {len(pv_systems)} pv systems")
 
-        last_pv_yield = pv_system.last_pv_yield
+        if pv_system.site_uuid in last_generations:
+            last_datetime = last_generations[pv_system.site_uuid]
+        else:
+            last_datetime = None
 
-        if pv_system.status_interval_minutes is None:
-            # don't know the status interval refresh time, so lets keep it
-            logger.debug(
-                f"We dont know the refresh time for pv systems {pv_system.pv_system_id}, "
-                f"so will be getting data "
-            )
-            keep_pv_systems.append(pv_system)
-        elif last_pv_yield is None:
+        if last_datetime is None:
             # there is no pv yield data for this pv system, so lets keep it
             logger.debug(
-                f"There is no pv yield data for pv systems {pv_system.pv_system_id}, "
+                f"There is no pv yield data for pv systems {pv_system.site_uuid}, "
                 f"so will be getting data "
             )
             keep_pv_systems.append(pv_system)
         else:
-            next_datetime_data_available = (
-                timedelta(minutes=pv_system.status_interval_minutes) + last_pv_yield.datetime_utc
-            )
+            next_datetime_data_available = timedelta(minutes=5) + last_datetime
+            logger.debug(next_datetime_data_available)
             if next_datetime_data_available < datetime_utc:
                 logger.debug(
-                    f"For pv system {pv_system.pv_system_id} as "
-                    f"last pv yield datetime is {last_pv_yield.datetime_utc},"
-                    f"refresh interval is {pv_system.status_interval_minutes}, "
-                    f"so will be getting data"
+                    f"For pv system {pv_system.site_uuid} as "
+                    f"last pv yield datetime is {last_datetime},"
+                    f"refresh interval is 5 minutes, "
+                    f"so will be getting data, {next_datetime_data_available=}"
                 )
                 keep_pv_systems.append(pv_system)
             else:
                 logger.debug(
-                    f"Not keeping pv system {pv_system.pv_system_id} as "
-                    f"last pv yield datetime is {last_pv_yield.datetime_utc},"
-                    f"refresh interval is {pv_system.status_interval_minutes}"
+                    f"Not keeping pv system {pv_system.site_uuid} as "
+                    f"last pv yield datetime is {last_datetime},"
+                    f"refresh interval is 5 minutes"
                 )
 
     return keep_pv_systems

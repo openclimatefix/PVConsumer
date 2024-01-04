@@ -3,8 +3,9 @@ import os
 
 import pandas as pd
 import pytest
-from nowcasting_datamodel.connection import DatabaseConnection
-from nowcasting_datamodel.models.base import Base_Forecast, Base_PV
+from pvsite_datamodel.connection import DatabaseConnection
+
+# from nowcasting_datamodel.connection import DatabaseConnection
 from pvsite_datamodel.sqlmodels import Base, GenerationSQL, SiteSQL
 from testcontainers.postgres import PostgresContainer
 
@@ -34,13 +35,7 @@ def postgresql_database(bases: list):
 
 @pytest.fixture
 def db_connection(scope="session"):
-    with postgresql_database([Base_PV, Base]) as db_conn:
-        yield db_conn
-
-
-@pytest.fixture(scope="session")
-def db_connection_forecast():
-    with postgresql_database([Base_Forecast]) as db_conn:
+    with postgresql_database([Base]) as db_conn:
         yield db_conn
 
 

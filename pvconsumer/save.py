@@ -1,30 +1,14 @@
 """ Save to database functions"""
 import logging
-from typing import List
 
 import pandas as pd
-from nowcasting_datamodel.models import PVSystem, PVYield
-from pvsite_datamodel.read.site import get_site_by_client_site_id
 from pvsite_datamodel.write.generation import insert_generation_values
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
 
-def save_to_database(session: Session, pv_yields: List[PVYield]):
-    """
-    Save pv data to database
-
-    :param session: database session
-    :param pv_yields: list of pv data
-    """
-    logger.debug(f"Will be adding {len(pv_yields)} pv yield object to database")
-
-    session.add_all(pv_yields)
-    session.commit()
-
-
-def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df: pd.DataFrame):
+def save_to_pv_site_database(session: Session, pv_yield_df: pd.DataFrame):
     """
 
     Save to pv site database
@@ -41,15 +25,17 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     if len(pv_yield_df) == 0:
         return
 
-    # get site from the pv_system
-    site = get_site_by_client_site_id(
-        session=session,
-        client_name=pv_system.provider,
-        client_site_id=pv_system.pv_system_id,
-    )
-
     # format dataframe
-    pv_yield_df["site_uuid"] = site.site_uuid
+    if "instantaneous_power_gen_W" in pv_yield_df.columns:
+        pv_yield_df["solar_generation_kw"] = pv_yield_df["instantaneous_power_gen_W"] / 1000
+    if "datetime_utc" not in pv_yield_df.columns:
+        pv_yield_df.rename(
+            columns={
+                "datetime": "datetime_utc",
+            },
+            inplace=True,
+        )
+
     pv_yield_df["power_kw"] = pv_yield_df["solar_generation_kw"]
     pv_yield_df["end_utc"] = pv_yield_df["datetime_utc"]
     # TODO this is hard coded for Sheffield Solar Passiv
@@ -58,3 +44,4 @@ def save_to_pv_site_database(session: Session, pv_system: PVSystem, pv_yield_df:
     # save to database
     logger.debug(f"Inserting {len(pv_yield_df)} records to pv site database")
     insert_generation_values(session, pv_yield_df)
+    session.commit()

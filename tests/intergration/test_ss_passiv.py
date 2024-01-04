@@ -1,9 +1,26 @@
 from datetime import datetime, timedelta, timezone
 
+import pytest
+
+from pvconsumer.pv_systems import get_pv_systems
 from pvconsumer.solar_sheffield_passiv import (
     get_all_latest_pv_yield_from_solar_sheffield,
     get_all_systems_from_solar_sheffield,
 )
+from pvconsumer.utils import solar_sheffield_passiv
+
+
+def test_get_pv_systems_ss(db_session, filename):
+    pv_systems = get_pv_systems(
+        session=db_session, filename=filename, provider=solar_sheffield_passiv
+    )
+
+    assert len(pv_systems) > 0
+
+
+def test_test_get_pv_systems_error(db_session, filename):
+    with pytest.raises(Exception):
+        _ = get_pv_systems(session=db_session, filename=filename, provider="fake")
 
 
 def test_get_all_systems():
@@ -12,7 +29,7 @@ def test_get_all_systems():
     # these numbers seem to change over time
     assert len(pv_systems) >= 56824
     assert len(pv_systems) <= 57200
-    assert pv_systems[0].installed_capacity_kw is not None
+    assert pv_systems.iloc[0].capacity_kw is not None
 
 
 def test_get_all_systems_filter():

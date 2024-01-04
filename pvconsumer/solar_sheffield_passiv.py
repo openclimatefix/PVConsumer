@@ -7,9 +7,6 @@ from typing import List
 
 import pandas as pd
 import requests
-from nowcasting_datamodel.models.pv import PVSystem
-
-from pvconsumer.utils import df_to_list_pv_system
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +28,7 @@ def raw_to_dataframe(response):
     return pd.DataFrame(data=data, columns=columns)
 
 
-def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> List[PVSystem]:
+def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> pd.DataFrame:
     """
     Get the pv systesm from solar sheffield
 
@@ -47,7 +44,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
     data_df = raw_to_dataframe(response=response)
 
     data_df.rename(columns={"system_id": "pv_system_id"}, inplace=True)
-    data_df.rename(columns={"kWp": "installed_capacity_kw"}, inplace=True)
+    data_df.rename(columns={"kWp": "capacity_kw"}, inplace=True)
     data_df.rename(columns={"longitude_rounded": "longitude"}, inplace=True)
     data_df.rename(columns={"latitude_rounded": "latitude"}, inplace=True)
 
@@ -71,9 +68,7 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> Lis
         data_df = data_df[data_df["pv_system_id"].isin(pv_system_ids)]
     # reformat
 
-    pv_systems = df_to_list_pv_system(data_df)
-
-    return pv_systems
+    return data_df
 
 
 def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
@@ -113,5 +108,8 @@ def get_all_latest_pv_yield_from_solar_sheffield() -> pd.DataFrame:
 
     # add timestamp UTC
     data_df["datetime_utc"] = data_df["datetime_utc"].dt.tz_localize("UTC")
+
+    # only take Passiv data
+    data_df = data_df[data_df["owner_name"] == "Passiv"]
 
     return data_df
