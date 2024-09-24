@@ -1,4 +1,5 @@
 import pytest
+
 from pvconsumer.pv_systems import get_pv_systems
 
 
