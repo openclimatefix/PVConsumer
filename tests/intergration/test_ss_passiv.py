@@ -28,7 +28,7 @@ def test_get_all_systems():
 
     # these numbers seem to change over time
     assert len(pv_systems) >= 56824
-    assert len(pv_systems) <= 57200
+    assert len(pv_systems) <= 57300
     assert pv_systems.iloc[0].capacity_kw is not None
 
 
