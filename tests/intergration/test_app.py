@@ -5,7 +5,7 @@ from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
 from pvconsumer.app import app, pull_data_and_save
 
 
-@pytest.skip("This test uses pvoutput.org which we not longer use")
+@pytest.mark.skip("This test uses pvoutput.org which we not longer use")
 def test_pull_data(db_session, sites):
     pull_data_and_save(pv_systems=sites, session=db_session, provider="pvoutput.org")
 
@@ -20,7 +20,7 @@ def test_pull_data_solar_sheffield(db_session, sites):
     assert len(pv_yields) > 0
 
 
-@pytest.skip("This test uses pvoutput.org which we not longer use")
+@pytest.mark.skip("This test uses pvoutput.org which we not longer use")
 def test_app(db_connection, filename, sites):
     runner = CliRunner()
     response = runner.invoke(
