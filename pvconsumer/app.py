@@ -10,10 +10,10 @@ import logging
 import os
 from datetime import datetime
 from typing import List, Optional, Tuple
-import sentry_sdk
 
 import click
 import pandas as pd
+import sentry_sdk
 from pvoutput import PVOutput
 from pvsite_datamodel.connection import DatabaseConnection
 from pvsite_datamodel.sqlmodels import SiteSQL
@@ -32,13 +32,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
-    environment=os.getenv("ENVIRONMENT", "local"),
-    traces_sample_rate=1
+    dsn=os.getenv("SENTRY_DSN"), environment=os.getenv("ENVIRONMENT", "local"), traces_sample_rate=1
 )
 
 sentry_sdk.set_tag("app_name", "PVConsumer")
 sentry_sdk.set_tag("version", pvconsumer.__version__)
+
 
 @click.command()
 @click.option(
