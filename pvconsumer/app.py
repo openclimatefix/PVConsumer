@@ -13,6 +13,7 @@ from typing import List, Optional, Tuple
 
 import click
 import pandas as pd
+import sentry_sdk
 from pvoutput import PVOutput
 from pvsite_datamodel.connection import DatabaseConnection
 from pvsite_datamodel.sqlmodels import SiteSQL
@@ -29,6 +30,13 @@ logging.basicConfig(
     format="[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+sentry_sdk.init(
+    dsn=os.getenv("SENTRY_DSN"), environment=os.getenv("ENVIRONMENT", "local"), traces_sample_rate=1
+)
+
+sentry_sdk.set_tag("app_name", "PVConsumer")
+sentry_sdk.set_tag("version", pvconsumer.__version__)
 
 
 @click.command()
