@@ -1,6 +1,5 @@
 """ Function to get data from Solar Shieffield about Pasiv systems"""
 
-
 import logging
 import os
 from typing import List
