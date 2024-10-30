@@ -104,13 +104,13 @@ poetry run pytest tests
 
 ## Environmental Variables
 
-- DB_URL: The database url which the forecasts will be saved too
 - API_KEY: API key for pvoutput.org
 - SYSTEM_ID: System id for pvoutput.org
 - DATA_SERVICE_URL: data service url for pvoutput.org
+- SS_URL: Sheffield Solar URL
+- SS_API_KEY: Sheffield Solar API key
+- SS_SYSTEM_ID: Sheffield Solar System ID
 - DB_URL: Save in database to the pv database
-- DB_URL_FORECAST: Let the database not that this service has run, `input_data_last_updatded` table
-- DB_URL_PV_SITE: PV Site database
 
 ## Contributors ✨
 

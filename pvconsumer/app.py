@@ -43,7 +43,7 @@ sentry_sdk.set_tag("version", pvconsumer.__version__)
 @click.option(
     "--db-url",
     default=None,
-    envvar="DB_URL_PV_SITE",
+    envvar="DB_URL",
     help="The PV site Database URL where update latest data will be saved",
     type=click.STRING,
 )
@@ -70,7 +70,6 @@ def app(
     Run PV consumer app, this collect live PV data and save it to a database.
 
     :param db_url: the Database url to save the PV system data
-    :param db_url_forecast: the Database url to save the Input data last updated
     :param filename: the local file name for the pv systems
     :return:
     """
