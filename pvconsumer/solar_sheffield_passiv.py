@@ -39,7 +39,9 @@ def get_all_systems_from_solar_sheffield(pv_system_ids: List[int] = None) -> pd.
 
     full_url = f"{url}sheffield_solar_static_data/table_data?user_id={user_id}&key={key}"
     response = requests.get(full_url)
-    assert response.status_code == 200, f"Cant get data from {url}sheffield_solar_static_data/table_data"
+    assert (
+        response.status_code == 200
+    ), f"Cant get data from {url}sheffield_solar_static_data/table_data"
 
     data_df = raw_to_dataframe(response=response)
 
