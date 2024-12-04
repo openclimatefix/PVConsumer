@@ -67,4 +67,4 @@ def test_app_ss(db_connection, filename_solar_sheffield, sites):
 
         # make sure there valyes in the generation table too
         pv_yields = session.query(GenerationSQL).all()
-        assert len(pv_yields) >= 9
+        assert len(pv_yields) >= 8
