@@ -10,7 +10,9 @@ from sqlalchemy.orm import Session
 logger = logging.getLogger(__name__)
 
 
-def format_pv_data(pv_system: LocationSQL, pv_yield_df: pd.DataFrame, session: Session) -> pd.DataFrame:
+def format_pv_data(
+    pv_system: LocationSQL, pv_yield_df: pd.DataFrame, session: Session
+) -> pd.DataFrame:
     """
     Format the pv data
 
