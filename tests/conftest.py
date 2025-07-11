@@ -18,7 +18,7 @@ def postgresql_database(bases: list):
 
     Automatically cleans up after itself.
     """
-    with PostgresContainer("postgres:14.5") as postgres:
+    with PostgresContainer("postgres:15.5") as postgres:
         url = postgres.get_connection_url()
         db_conn = DatabaseConnection(url, echo=False)
         engine = db_conn.engine
@@ -82,10 +82,10 @@ def sites(db_session, filename, filename_solar_sheffield):
 
     sites = []
     sites_df = pd.read_csv(filename_solar_sheffield, index_col=0)
-    client_site_ids = sites_df["pv_system_id"].values
-    for i in range(0, len(client_site_ids)):
+    client_location_ids = sites_df["pv_system_id"].values
+    for i in range(0, len(client_location_ids)):
         site = LocationSQL(
-            client_site_id=int(client_site_ids[i]),
+            client_location_id=int(client_location_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,
@@ -98,10 +98,10 @@ def sites(db_session, filename, filename_solar_sheffield):
         sites.append(site)
 
     sites_df = pd.read_csv(filename, index_col=0)
-    client_site_ids = sites_df.index
-    for i in range(0, len(client_site_ids)):
+    client_location_ids = sites_df.index
+    for i in range(0, len(client_location_ids)):
         site = LocationSQL(
-            client_site_id=int(client_site_ids[i]),
+            client_location_id=int(client_location_ids[i]),
             latitude=51,
             longitude=3,
             capacity_kw=4,

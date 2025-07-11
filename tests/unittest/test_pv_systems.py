@@ -31,7 +31,7 @@ def test_find_missing_pv_systems():
 
     pv_systems_db = pd.DataFrame(
         [
-            dict(client_site_id=1, provider="pvoutput.org"),
+            dict(client_location_id=1, provider="pvoutput.org"),
         ]
     )
 
