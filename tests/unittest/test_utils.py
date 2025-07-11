@@ -27,7 +27,7 @@ def test_pv_yield_df_last_pv_yield(sites, db_session):
     last_pv_yield = GenerationSQL(
         start_utc=datetime(2022, 1, 1), end_utc=datetime(2022, 1, 1), generation_power_kw=10
     )
-    last_pv_yield.site = sites[0]
+    last_pv_yield.location = sites[0]
     db_session.add(last_pv_yield)
 
     pv_yield_df = pd.DataFrame(
@@ -48,7 +48,8 @@ def test_pv_yield_df_0_bug(sites, db_session):
     last_pv_yield = GenerationSQL(
         start_utc=datetime(2021, 1, 1), end_utc=datetime(2021, 1, 1), generation_power_kw=10
     )
-    last_pv_yield.site = sites[0]
+    last_pv_yield.location = sites[0]
+
     db_session.add(last_pv_yield)
 
     pv_yield_df = pd.DataFrame(

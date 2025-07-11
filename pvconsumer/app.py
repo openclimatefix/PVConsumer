@@ -174,7 +174,7 @@ def pull_data_and_save(
             pv_yield_df = all_pv_yield_df[
                 all_pv_yield_df["system_id"].astype(int) == pv_system.client_location_id
             ]
-            pv_yield_df["location_uuid"] = pv_system.site_uuid
+            pv_yield_df["location_uuid"] = pv_system.location_uuid
 
             logger.debug(
                 f"Got {len(pv_yield_df)} pv yield for "
