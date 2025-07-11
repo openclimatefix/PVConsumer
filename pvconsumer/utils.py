@@ -3,14 +3,16 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 import pandas as pd
-from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import GenerationSQL, LocationSQL
 from sqlalchemy.orm import Session
 
 #
 logger = logging.getLogger(__name__)
 
 
-def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Session) -> pd.DataFrame:
+def format_pv_data(
+    pv_system: LocationSQL, pv_yield_df: pd.DataFrame, session: Session
+) -> pd.DataFrame:
     """
     Format the pv data
 
@@ -45,7 +47,7 @@ def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Sessi
         ):
             logger.debug(
                 f"Dropping last row of pv data for "
-                f"{pv_system.client_site_id} "
+                f"{pv_system.client_location_id} "
                 f"as last row is 0, but the second to last row is not."
             )
             pv_yield_df.drop(pv_yield_df.tail(1).index, inplace=True)
@@ -58,9 +60,9 @@ def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Sessi
 
     last_pv_generation = (
         session.query(GenerationSQL)
-        .filter(GenerationSQL.site_uuid == pv_system.site_uuid)
-        .join(SiteSQL)
-        .filter(SiteSQL.site_uuid == pv_system.site_uuid)
+        .filter(GenerationSQL.location_uuid == pv_system.location_uuid)
+        .join(LocationSQL)
+        .filter(LocationSQL.location_uuid == pv_system.location_uuid)
         .filter(GenerationSQL.start_utc > start_utc_filter)
         .order_by(GenerationSQL.created_utc.desc())
         .first()
@@ -79,7 +81,7 @@ def format_pv_data(pv_system: SiteSQL, pv_yield_df: pd.DataFrame, session: Sessi
             logger.debug(pv_yield_df)
     else:
         logger.debug(
-            f"This is the first lot pv yield data for pv system {(pv_system.client_site_id)}"
+            f"This is the first lot pv yield data for pv system {(pv_system.client_location_id)}"
         )
 
     return pv_yield_df

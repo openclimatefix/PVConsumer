@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 import pandas as pd
-from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import GenerationSQL, LocationSQL
 
 from pvconsumer.pv_systems import (
     filter_pv_systems_which_have_new_data,
@@ -31,7 +31,7 @@ def test_find_missing_pv_systems():
 
     pv_systems_db = pd.DataFrame(
         [
-            dict(client_site_id=1, provider="pvoutput.org"),
+            dict(client_location_id=1, provider="pvoutput.org"),
         ]
     )
 
@@ -46,9 +46,9 @@ def test_find_missing_pv_systems():
 
 def test_filter_pv_systems_which_have_no_datal(db_session):
     pv_systems = [
-        SiteSQL(site_uuid=uuid.uuid4()),
-        SiteSQL(site_uuid=uuid.uuid4()),
-        SiteSQL(site_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
     ]
 
     pv_systems_keep = filter_pv_systems_which_have_new_data(
@@ -68,8 +68,8 @@ def test_filter_pv_systems_which_have_new_data(db_session, sites):
         generation_power_kw=3,
     )
 
-    pv_yield_0.site = sites[0]
-    pv_yield_1.site = sites[1]
+    pv_yield_0.location = sites[0]
+    pv_yield_1.location = sites[1]
 
     db_session.add_all([pv_yield_0, pv_yield_1])
     db_session.commit()
@@ -88,5 +88,5 @@ def test_filter_pv_systems_which_have_new_data(db_session, sites):
     )
 
     assert len(pv_systems_keep) == 29
-    assert pv_systems_keep[0].site_uuid == sites[0].site_uuid
-    assert pv_systems_keep[1].site_uuid == sites[2].site_uuid
+    assert pv_systems_keep[0].location_uuid == sites[0].location_uuid
+    assert pv_systems_keep[1].location_uuid == sites[2].location_uuid

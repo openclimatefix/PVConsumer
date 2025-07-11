@@ -16,7 +16,7 @@ import pandas as pd
 import sentry_sdk
 from pvoutput import PVOutput
 from pvsite_datamodel.connection import DatabaseConnection
-from pvsite_datamodel.sqlmodels import SiteSQL
+from pvsite_datamodel.sqlmodels import LocationSQL
 from sqlalchemy.orm import Session
 
 import pvconsumer
@@ -101,7 +101,7 @@ def app(
 
 
 def pull_data_and_save(
-    pv_systems: List[SiteSQL],
+    pv_systems: List[LocationSQL],
     session: Session,
     provider: str,
     datetime_utc: Optional[None] = None,
@@ -142,7 +142,7 @@ def pull_data_and_save(
             pv_output = PVOutput()
 
             # get all the pv system ids from a a group of pv systems
-            pv_system_ids = [pv_system.client_site_id for pv_system in pv_system_chunk]
+            pv_system_ids = [pv_system.client_location_id for pv_system in pv_system_chunk]
 
             logger.debug(f"Getting data from {provider}")
 
@@ -166,23 +166,25 @@ def pull_data_and_save(
         for _, pv_system in enumerate(pv_system_chunk):
             i = i + 1
             logger.debug(
-                f"Processing {i}th pv system ({pv_system.client_site_id=}), "
+                f"Processing {i}th pv system ({pv_system.client_location_id=}), "
                 f"out of {len(pv_systems)}"
             )
 
             # take only the data we need for system id
             pv_yield_df = all_pv_yield_df[
-                all_pv_yield_df["system_id"].astype(int) == pv_system.client_site_id
+                all_pv_yield_df["system_id"].astype(int) == pv_system.client_location_id
             ]
-            pv_yield_df["site_uuid"] = pv_system.site_uuid
+            pv_yield_df["location_uuid"] = pv_system.location_uuid
 
             logger.debug(
                 f"Got {len(pv_yield_df)} pv yield for "
-                f"pv systems {pv_system.client_site_id} before filtering"
+                f"pv systems {pv_system.client_location_id} before filtering"
             )
 
             if len(pv_yield_df) == 0:
-                logger.warning(f"Did not find any data for {pv_system.client_site_id} for {date}")
+                logger.warning(
+                    f"Did not find any data for {pv_system.client_location_id} for {date}"
+                )
             else:
                 # filter out which is in our database and a funny 0 bug
                 pv_yield_df = format_pv_data(
