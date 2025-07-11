@@ -68,8 +68,8 @@ def test_filter_pv_systems_which_have_new_data(db_session, sites):
         generation_power_kw=3,
     )
 
-    pv_yield_0.site = sites[0]
-    pv_yield_1.site = sites[1]
+    pv_yield_0.location = sites[0]
+    pv_yield_1.location = sites[1]
 
     db_session.add_all([pv_yield_0, pv_yield_1])
     db_session.commit()
