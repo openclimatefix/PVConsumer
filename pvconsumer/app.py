@@ -182,7 +182,9 @@ def pull_data_and_save(
             )
 
             if len(pv_yield_df) == 0:
-                logger.warning(f"Did not find any data for {pv_system.client_location_id} for {date}")
+                logger.warning(
+                    f"Did not find any data for {pv_system.client_location_id} for {date}"
+                )
             else:
                 # filter out which is in our database and a funny 0 bug
                 pv_yield_df = format_pv_data(
