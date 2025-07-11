@@ -6,7 +6,7 @@ import pytest
 from pvsite_datamodel.connection import DatabaseConnection
 
 # from nowcasting_datamodel.connection import DatabaseConnection
-from pvsite_datamodel.sqlmodels import Base, GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import Base, GenerationSQL, LocationSQL
 from testcontainers.postgres import PostgresContainer
 
 import pvconsumer
@@ -78,13 +78,13 @@ def sites(db_session, filename, filename_solar_sheffield):
     """create some fake sites"""
 
     db_session.query(GenerationSQL).delete()
-    db_session.query(SiteSQL).delete()
+    db_session.query(LocationSQL).delete()
 
     sites = []
     sites_df = pd.read_csv(filename_solar_sheffield, index_col=0)
     client_site_ids = sites_df["pv_system_id"].values
     for i in range(0, len(client_site_ids)):
-        site = SiteSQL(
+        site = LocationSQL(
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,
@@ -100,7 +100,7 @@ def sites(db_session, filename, filename_solar_sheffield):
     sites_df = pd.read_csv(filename, index_col=0)
     client_site_ids = sites_df.index
     for i in range(0, len(client_site_ids)):
-        site = SiteSQL(
+        site = LocationSQL(
             client_site_id=int(client_site_ids[i]),
             latitude=51,
             longitude=3,

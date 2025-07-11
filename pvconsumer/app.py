@@ -16,7 +16,7 @@ import pandas as pd
 import sentry_sdk
 from pvoutput import PVOutput
 from pvsite_datamodel.connection import DatabaseConnection
-from pvsite_datamodel.sqlmodels import SiteSQL
+from pvsite_datamodel.sqlmodels import LocationSQL
 from sqlalchemy.orm import Session
 
 import pvconsumer
@@ -101,7 +101,7 @@ def app(
 
 
 def pull_data_and_save(
-    pv_systems: List[SiteSQL],
+    pv_systems: List[LocationSQL],
     session: Session,
     provider: str,
     datetime_utc: Optional[None] = None,

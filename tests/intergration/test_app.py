@@ -1,6 +1,6 @@
 import pytest
 from click.testing import CliRunner
-from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import GenerationSQL, LocationSQL
 
 from pvconsumer.app import app, pull_data_and_save
 
@@ -35,7 +35,7 @@ def test_app(db_connection, filename, sites):
     assert response.exit_code == 0, response.exception
 
     with db_connection.get_session() as session:
-        pv_systems = session.query(SiteSQL).all()
+        pv_systems = session.query(LocationSQL).all()
         assert len(pv_systems) == 30
 
         pv_yields = session.query(GenerationSQL).all()
@@ -60,7 +60,7 @@ def test_app_ss(db_connection, filename_solar_sheffield, sites):
     assert response.exit_code == 0, response.exception
 
     with db_connection.get_session() as session:
-        pv_systems = session.query(SiteSQL).all()
+        pv_systems = session.query(LocationSQL).all()
         assert len(pv_systems) == 30
         # the app gets multiple values for each pv system.
         # There is a chance this will fail in the early morning when no data is available

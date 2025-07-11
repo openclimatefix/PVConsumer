@@ -7,7 +7,7 @@ from typing import List, Optional
 import pandas as pd
 from pvoutput import PVOutput
 from pvsite_datamodel.read import get_all_sites
-from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import GenerationSQL, LocationSQL
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -86,7 +86,7 @@ def find_missing_pv_systems(
 
 def get_pv_systems(
     session: Session, provider: str, filename: Optional[str] = None
-) -> List[SiteSQL]:
+) -> List[LocationSQL]:
     """
     Get PV systems
 
@@ -101,7 +101,7 @@ def get_pv_systems(
     """
     # load all pv systems in database
 
-    pv_systems_sql_db: List[SiteSQL] = get_all_sites(session=session)
+    pv_systems_sql_db: List[LocationSQL] = get_all_sites(session=session)
 
     # convert to sql objects to Pandas datafraome
     pv_systems_db_df = pd.DataFrame([pv_system.__dict__ for pv_system in pv_systems_sql_db])
@@ -152,11 +152,11 @@ def get_pv_systems(
                 raise Exception(f"Can not use provider {provider}")
 
             # get the current max ml id, small chance this could lead to a raise condition
-            max_ml_id = session.query(func.max(SiteSQL.ml_id)).scalar()
+            max_ml_id = session.query(func.max(LocationSQL.ml_id)).scalar()
             if max_ml_id is None:
                 max_ml_id = 0
 
-            site = SiteSQL(
+            site = LocationSQL(
                 client_site_id=str(pv_system.pv_system_id),
                 client_site_name=f"{provider}_{pv_system.pv_system_id}",
                 latitude=pv_system.latitude,
@@ -173,13 +173,13 @@ def get_pv_systems(
             # therefore its good to save this on the go
             session.commit()
 
-    pv_systems_sql_db: List[SiteSQL] = get_all_sites(session=session)
+    pv_systems_sql_db: List[LocationSQL] = get_all_sites(session=session)
 
     return pv_systems_sql_db
 
 
 def filter_pv_systems_which_have_new_data(
-    session: Session, pv_systems: List[SiteSQL], datetime_utc: Optional[datetime] = None
+    session: Session, pv_systems: List[LocationSQL], datetime_utc: Optional[datetime] = None
 ):
     """
     Filter pv systems which have new data available
@@ -208,23 +208,23 @@ def filter_pv_systems_which_have_new_data(
     if datetime_utc is None:
         datetime_utc = datetime.utcnow()  # add timezone
 
-    site_uuids = [pv_system.site_uuid for pv_system in pv_systems]
+    site_uuids = [pv_system.location_uuid for pv_system in pv_systems]
 
     # pull the latest data from the database
     query = (
-        session.query(SiteSQL.site_uuid, GenerationSQL.start_utc)
+        session.query(LocationSQL.location_uuid, GenerationSQL.start_utc)
         .distinct(
-            GenerationSQL.site_uuid,
+            GenerationSQL.location_uuid,
             # GenerationSQL.start_utc,
         )
-        .join(SiteSQL)
+        .join(LocationSQL)
         .filter(
             GenerationSQL.start_utc <= datetime_utc,
             GenerationSQL.start_utc >= datetime_utc - timedelta(days=1),
-            GenerationSQL.site_uuid.in_(site_uuids),
+            GenerationSQL.location_uuid.in_(site_uuids),
         )
         .order_by(
-            GenerationSQL.site_uuid,
+            GenerationSQL.location_uuid,
             GenerationSQL.start_utc,
             GenerationSQL.created_utc.desc(),
         )
@@ -236,15 +236,15 @@ def filter_pv_systems_which_have_new_data(
     for i, pv_system in enumerate(pv_systems):
         logger.debug(f"Looking at {i}th pv system, out of {len(pv_systems)} pv systems")
 
-        if pv_system.site_uuid in last_generations:
-            last_datetime = last_generations[pv_system.site_uuid]
+        if pv_system.location_uuid in last_generations:
+            last_datetime = last_generations[pv_system.location_uuid]
         else:
             last_datetime = None
 
         if last_datetime is None:
             # there is no pv yield data for this pv system, so lets keep it
             logger.debug(
-                f"There is no pv yield data for pv systems {pv_system.site_uuid}, "
+                f"There is no pv yield data for pv systems {pv_system.location_uuid}, "
                 f"so will be getting data "
             )
             keep_pv_systems.append(pv_system)
@@ -253,7 +253,7 @@ def filter_pv_systems_which_have_new_data(
             logger.debug(next_datetime_data_available)
             if next_datetime_data_available < datetime_utc:
                 logger.debug(
-                    f"For pv system {pv_system.site_uuid} as "
+                    f"For pv system {pv_system.location_uuid} as "
                     f"last pv yield datetime is {last_datetime},"
                     f"refresh interval is 5 minutes, "
                     f"so will be getting data, {next_datetime_data_available=}"
@@ -261,7 +261,7 @@ def filter_pv_systems_which_have_new_data(
                 keep_pv_systems.append(pv_system)
             else:
                 logger.debug(
-                    f"Not keeping pv system {pv_system.site_uuid} as "
+                    f"Not keeping pv system {pv_system.location_uuid} as "
                     f"last pv yield datetime is {last_datetime},"
                     f"refresh interval is 5 minutes"
                 )

@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 import pandas as pd
-from pvsite_datamodel.sqlmodels import GenerationSQL, SiteSQL
+from pvsite_datamodel.sqlmodels import GenerationSQL, LocationSQL
 
 from pvconsumer.pv_systems import (
     filter_pv_systems_which_have_new_data,
@@ -46,9 +46,9 @@ def test_find_missing_pv_systems():
 
 def test_filter_pv_systems_which_have_no_datal(db_session):
     pv_systems = [
-        SiteSQL(site_uuid=uuid.uuid4()),
-        SiteSQL(site_uuid=uuid.uuid4()),
-        SiteSQL(site_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
+        LocationSQL(location_uuid=uuid.uuid4()),
     ]
 
     pv_systems_keep = filter_pv_systems_which_have_new_data(
@@ -88,5 +88,5 @@ def test_filter_pv_systems_which_have_new_data(db_session, sites):
     )
 
     assert len(pv_systems_keep) == 29
-    assert pv_systems_keep[0].site_uuid == sites[0].site_uuid
-    assert pv_systems_keep[1].site_uuid == sites[2].site_uuid
+    assert pv_systems_keep[0].location_uuid == sites[0].location_uuid
+    assert pv_systems_keep[1].location_uuid == sites[2].location_uuid
