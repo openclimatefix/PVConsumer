@@ -47,7 +47,7 @@ def format_pv_data(
         ):
             logger.debug(
                 f"Dropping last row of pv data for "
-                f"{pv_system.client_site_id} "
+                f"{pv_system.client_location_id} "
                 f"as last row is 0, but the second to last row is not."
             )
             pv_yield_df.drop(pv_yield_df.tail(1).index, inplace=True)
@@ -81,7 +81,7 @@ def format_pv_data(
             logger.debug(pv_yield_df)
     else:
         logger.debug(
-            f"This is the first lot pv yield data for pv system {(pv_system.client_site_id)}"
+            f"This is the first lot pv yield data for pv system {(pv_system.client_location_id)}"
         )
 
     return pv_yield_df

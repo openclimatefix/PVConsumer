@@ -67,7 +67,7 @@ def find_missing_pv_systems(
 
     # get system ids
     if "pv_system_id" not in pv_systems_db.columns:
-        pv_systems_db["pv_system_id"] = pv_systems_db["client_site_id"]
+        pv_systems_db["pv_system_id"] = pv_systems_db["client_location_id"]
     pv_systems_db = pv_systems_db[["pv_system_id"]]
     pv_systems_local = pv_systems_local[["pv_system_id"]]
 
@@ -157,7 +157,7 @@ def get_pv_systems(
                 max_ml_id = 0
 
             site = LocationSQL(
-                client_site_id=str(pv_system.pv_system_id),
+                client_location_id=str(pv_system.pv_system_id),
                 client_site_name=f"{provider}_{pv_system.pv_system_id}",
                 latitude=pv_system.latitude,
                 longitude=pv_system.longitude,
