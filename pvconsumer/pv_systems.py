@@ -158,7 +158,7 @@ def get_pv_systems(
 
             site = LocationSQL(
                 client_location_id=str(pv_system.pv_system_id),
-                client_site_name=f"{provider}_{pv_system.pv_system_id}",
+                client_location_name=f"{provider}_{pv_system.pv_system_id}",
                 latitude=pv_system.latitude,
                 longitude=pv_system.longitude,
                 capacity_kw=pv_system.capacity_kw,
