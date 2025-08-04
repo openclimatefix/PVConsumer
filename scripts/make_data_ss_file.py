@@ -1,4 +1,4 @@
-""" Make Solar shieffled passiv data file"""
+"""Make Solar shieffled passiv data file"""
 
 from pvconsumer.solar_sheffield_passiv import get_all_latest_pv_yield_from_solar_sheffield
 
