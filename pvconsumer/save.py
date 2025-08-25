@@ -1,4 +1,5 @@
-""" Save to database functions"""
+"""Save to database functions"""
+
 import logging
 
 import pandas as pd

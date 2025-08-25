@@ -1,4 +1,4 @@
-""" Get list of pv systems data for live
+"""Get list of pv systems data for live
 
 1. load data from gcp
 2. save systems ids to a txt file
