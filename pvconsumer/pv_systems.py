@@ -1,4 +1,5 @@
-""" PV system functions """
+"""PV system functions"""
+
 import logging
 import os
 from datetime import datetime, timedelta
