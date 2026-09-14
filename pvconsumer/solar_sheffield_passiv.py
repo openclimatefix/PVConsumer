@@ -1,5 +1,4 @@
-""" Function to get data from Solar Shieffield about Pasiv systems"""
-
+"""Function to get data from Solar Shieffield about Pasiv systems"""
 
 import logging
 import os
