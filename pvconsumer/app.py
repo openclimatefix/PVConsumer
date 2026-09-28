@@ -1,4 +1,4 @@
-""" Application for getting live pv data
+"""Application for getting live pv data
 
 1. Load Pv system ids from local csv file
 2. For each site, find the most recent data in a database
