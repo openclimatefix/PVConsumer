@@ -1,4 +1,4 @@
-""" We noticed that for lots of the passive sites, the tilt was wrong in the database."""
+"""We noticed that for lots of the passive sites, the tilt was wrong in the database."""
 
 import os
 
