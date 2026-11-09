@@ -1,4 +1,5 @@
-""" Utils functions """
+"""Utils functions"""
+
 import logging
 from datetime import datetime, timedelta, timezone
 
